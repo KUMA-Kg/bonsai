@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preload" as="image" href="images/kinjyakka/hero.webp">
+<title>金雀花 | 文人縁盆栽コレクション</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Shippori+Mincho:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  /*
+   * 金雀花 LP — 単一HTML内スタイル
+   * ブロック順: トークン → ベース → ヒーロー → 共通セクション → Main Visual
+   * → 詳細情報 → 説明 → 来歴 → 知識 → 展示履歴 → 楽しみ方 → 販売 → フッター
+   * → フェード／メディアクエリ
+   */
+  :root {
+    /* 翡翠 (Jade)：基調色／テキスト／ボーダー */
+    --ai-shin:   #1f4d3a;
+    --ai-deep:   #2d6b54;
+    --ai-mid:    #4d7a5e;
+    --ai-light:  #7a9e8a;
+    --ai-pale:   #aac4b7;
+    --ai-mist:   #d4e4d8;
+    /* 余白／背景：白 */
+    --kiji:      #fafaf7;
+    --kiji-deep: #f0ede4;
+    --white:     #ffffff;
+    /* テキスト */
+    --text-main: #1f4d3a;
+    --text-sub:  #4d7a5e;
+    --text-muted:#8a9e92;
+    /* ボーダー／薄い面 */
+    --border:    rgba(31, 77, 58, 0.14);
+    --border-ai: rgba(77, 122, 94, 0.26);
+    --surface:   #f0f5ed;
+    --surface-2: #e3edd8;
+    /* 黄金 (Gold)：アクセント／春の花・光・高級感 */
+    --gold-deep: #a87f2c;
+    --gold:      #c8a14d;
+    --gold-light:#d4b876;
+    --gold-pale: #ede0b8;
+    /* 価格・黒インク（詳細情報・販売の金額表記など） */
+    --ink:      #111111;
+    --ink-soft: #1a1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--kiji);
+    color: var(--text-main);
+    font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* 麻柄テクスチャ */
+  .hemp-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(31,77,58,0.04) 3px, rgba(31,77,58,0.04) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(31,77,58,0.04) 3px, rgba(31,77,58,0.04) 4px),
+      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(31,77,58,0.02) 10px, rgba(31,77,58,0.02) 11px),
+      repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(31,77,58,0.02) 10px, rgba(31,77,58,0.02) 11px);
+    background-size: 20px 20px;
+  }
+
+  /* AIが生成した仮テキストのマーカー（色は地の色を継承） */
+  .draft {
+    color: inherit;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: hidden;
+    background: var(--ai-shin);
+  }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-bg-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; display: block; border: 0;
+    opacity: 0.95;
+    filter: saturate(1.2) contrast(1.08) brightness(1.02);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(15,38,28,0.00)  0%,
+      rgba(15,38,28,0.00) 40%,
+      rgba(11,28,20,0.35) 72%,
+      rgba(3,10,5,0.97) 100%);
+  }
+  .hero-kasumi {
+    position: absolute; bottom: 37%; left: 0; right: 0;
+    padding: 0 28px;
+    display: flex; align-items: center; gap: 8px;
+    z-index: 1; opacity: 0.3;
+  }
+  .kasumi-bar { height: 2px; background: var(--ai-mist); border-radius: 1px; }
+  .kasumi-bar--w56  { width: 56px; }
+  .kasumi-bar--w110 { width: 110px; }
+  .kasumi-bar--w36  { width: 36px; }
+  .hero-tate {
+    position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+    z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 14px;
+    opacity: 0; animation: fadeIn 1.5s ease-out 1.4s forwards;
+  }
+  .tate-line { width: 1px; height: 44px; background: rgba(170,196,183,0.35); }
+  .tate-text {
+    font-family: 'Shippori Mincho', serif; font-size: 10px;
+    letter-spacing: .35em; color: rgba(170,196,183,0.6); writing-mode: vertical-rl;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 24px 72px;
+    animation: fadeUp 1s ease-out 0.4s both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .hero-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(52px,13vw,88px); font-weight: 800;
+    line-height: 1.05; letter-spacing: .06em;
+    color: var(--white); margin-bottom: 10px;
+  }
+  .hero-subtitle {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(13px,3.2vw,17px); font-weight: 400;
+    color: var(--gold-light); letter-spacing: .25em;
+    margin-bottom: 36px; display: block;
+  }
+  .hero-tanzaku {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(170,196,183,0.22);
+    padding: 16px 22px; backdrop-filter: blur(6px);
+  }
+  .hero-tagline {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(13px,3vw,15px); font-weight: 400;
+    line-height: 2.15; letter-spacing: .08em;
+    color: var(--white);
+  }
+  .hero-scroll-hint {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 3; display: flex; flex-direction: column; align-items: center;
+    opacity: 0; animation: fadeIn 2s ease-out 2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 44px;
+    background: linear-gradient(180deg, var(--ai-pale), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+  /* ===== SECTIONS ===== */
+  section {
+    position: relative; z-index: 1;
+    padding: 80px 0; border-top: 1px solid var(--border);
+  }
+  section:nth-child(even) { background: rgba(31,77,58,0.04); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 40px;
+  }
+  .section-label-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; color: var(--ai-mid); letter-spacing: .3em;
+  }
+  .section-label-text {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 10px; letter-spacing: .45em;
+    color: var(--text-muted); text-transform: uppercase;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .section-title-jp {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(20px,5vw,28px); font-weight: 600;
+    letter-spacing: .15em; color: var(--ai-shin); margin-bottom: 6px;
+  }
+  .section-title-en {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 12px; letter-spacing: .35em;
+    color: var(--ai-light); text-transform: uppercase;
+    display: block; margin-bottom: 36px;
+  }
+
+  /* ===== 01 Main Visual ===== */
+  .main-image-wrapper { position: relative; width: 100%; max-width: 600px; margin: 0 auto; }
+  .main-image-frame {
+    position: relative; width: 100%; aspect-ratio: 3/4;
+    background: var(--surface); border: 1px solid var(--border-ai);
+    overflow: hidden;
+    display: block;
+  }
+  .main-visual-picture {
+    position: absolute; inset: 0; z-index: 0; margin: 0;
+    display: block;
+  }
+  .main-visual-img {
+    width: 100%; height: 100%;
+    display: block; object-fit: cover;
+  }
+  .main-image-frame::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(31,77,58,0.04) 4px,rgba(31,77,58,0.04) 5px),
+      repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(31,77,58,0.04) 4px,rgba(31,77,58,0.04) 5px);
+    background-size:20px 20px;
+  }
+  .main-image-frame::after {
+    content:''; position:absolute; inset:8px;
+    border:1px solid rgba(77,122,94,0.1); pointer-events:none;
+  }
+  .corner-deco { position:absolute; width:20px; height:20px; z-index:2; }
+  .corner-deco.tl { top:0;left:0; border-top:2px solid var(--ai-mid); border-left:2px solid var(--ai-mid); }
+  .corner-deco.tr { top:0;right:0; border-top:2px solid var(--ai-mid); border-right:2px solid var(--ai-mid); }
+  .corner-deco.bl { bottom:0;left:0; border-bottom:2px solid var(--ai-mid); border-left:2px solid var(--ai-mid); }
+  .corner-deco.br { bottom:0;right:0; border-bottom:2px solid var(--ai-mid); border-right:2px solid var(--ai-mid); }
+  .image-caption {
+    margin-top:14px; display:flex; justify-content:space-between;
+    align-items:center; padding:0 4px;
+  }
+  .image-caption-text {
+    font-family:'Shippori Mincho',serif; font-size:11px;
+    color:var(--text-muted); letter-spacing:.2em;
+  }
+  /* 世界観カット（夜の京都など、メインビジュアルに添えるサブ写真） */
+  .atmosphere-photo {
+    margin-top:28px; position:relative; width:100%;
+    aspect-ratio:3/4; overflow:hidden;
+    border:1px solid var(--border-ai); background:var(--surface);
+  }
+  .atmosphere-photo img {
+    width:100%; height:100%; display:block; object-fit:cover;
+  }
+  .atmosphere-photo::after {
+    content:''; position:absolute; inset:8px;
+    border:1px solid rgba(77,122,94,0.12);
+    pointer-events:none;
+  }
+
+  /* ===== 02 詳細情報 ===== */
+  .info-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:1px; background:var(--border); border:1px solid var(--border); margin-top:32px;
+  }
+  .info-cell { background:var(--kiji); padding:20px 24px; }
+  .info-cell.full { grid-column:1/-1; }
+  .info-label {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:10px;
+    letter-spacing:.35em; color:var(--ai-light); text-transform:uppercase;
+    margin-bottom:8px; display:block;
+  }
+  .info-value {
+    font-family:'Shippori Mincho',serif; font-size:16px;
+    font-weight:500; color:var(--ai-shin); letter-spacing:.05em; line-height:1.5;
+  }
+  .info-value.large { font-size:22px; font-weight:700; }
+  .info-value.price { font-size:20px; color:var(--ink); font-weight:700; }
+  .info-reading {
+    font-size:15px; font-weight:400; color:var(--text-muted);
+  }
+  .info-tree-sub {
+    font-size:11px; color:var(--text-muted);
+  }
+  .info-age-em {
+    font-size:22px; font-weight:700;
+  }
+  .info-price-suffix {
+    font-size:12px; color:var(--text-muted); font-weight:400;
+  }
+  .info-en-subtitle {
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:13px; color:var(--ai-light);
+    letter-spacing:.2em; margin-top:4px;
+  }
+  .status-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 14px; border:1px solid var(--ai-mid); color:var(--ai-mid);
+    font-family:'Shippori Mincho',serif; font-size:12px; letter-spacing:.2em;
+    margin-top:6px; background:rgba(77,122,94,0.06);
+  }
+  .status-dot {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--ai-mid); animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ===== 03 この盆栽について ===== */
+  .lead-copy {
+    font-family:'Shippori Mincho',serif;
+    font-size:clamp(16px,4vw,21px); font-weight:500;
+    line-height:2.05; letter-spacing:.08em;
+    color:var(--ai-shin); margin-bottom:28px;
+    padding-left:20px; border-left:3px solid var(--ai-mid);
+  }
+  .body-text {
+    font-family:'Noto Serif JP',serif; font-size:14px; font-weight:300;
+    line-height:2.1; color:var(--text-sub); letter-spacing:.05em;
+  }
+
+  /* ===== 04 来歴 ===== */
+  .story-blocks {
+    display:flex; flex-direction:column; gap:48px;
+  }
+  .story-block {
+    display:flex; flex-direction:column; gap:18px;
+  }
+  /* 各エピソードのメイン写真。1:1 + 内側に細い藍ラインの二重枠 */
+  .story-photo {
+    position:relative;
+    width:100%; aspect-ratio:1/1;
+    border:1px solid var(--border-ai);
+    background:var(--surface); overflow:hidden;
+  }
+  .story-photo img {
+    width:100%; height:100%; display:block; object-fit:cover;
+  }
+  .story-photo::after {
+    content:''; position:absolute; inset:8px;
+    border:1px solid rgba(77,122,94,0.12);
+    pointer-events:none;
+  }
+  .story-block-title {
+    font-family:'Shippori Mincho',serif; font-size:14px;
+    font-weight:700; letter-spacing:.1em; color:var(--ai-deep); margin-bottom:8px;
+  }
+  .story-block-text {
+    font-family:'Noto Serif JP',serif; font-size:13px;
+    font-weight:300; color:var(--text-sub); line-height:2.0;
+  }
+
+  /* ===== 05 ムレスズメとは ===== */
+  .knowledge-cards {
+    display:grid; grid-template-columns:1fr;
+    gap:1px; background:var(--border); border:1px solid var(--border);
+  }
+  .knowledge-card {
+    background:var(--kiji); padding:24px;
+    display:flex; gap:20px; align-items:flex-start; transition:background .25s;
+  }
+  .knowledge-card:hover { background:rgba(31,77,58,0.05); }
+  .knowledge-num {
+    font-family:'Cormorant Garamond',serif; font-size:32px;
+    font-weight:300; color:var(--ai-mist); line-height:1; min-width:36px;
+  }
+  .knowledge-title {
+    font-family:'Shippori Mincho',serif; font-size:14px;
+    font-weight:700; color:var(--ai-deep); letter-spacing:.1em; margin-bottom:8px;
+  }
+  .knowledge-text {
+    font-family:'Noto Serif JP',serif; font-size:13px;
+    font-weight:300; color:var(--text-sub); line-height:1.95;
+  }
+
+  /* ===== 06 展示履歴 ===== */
+  .history-timeline { position:relative; padding-left:32px; }
+  .history-timeline::before {
+    content:''; position:absolute; left:6px; top:8px; bottom:8px; width:1px;
+    background:linear-gradient(180deg,var(--ai-mid),var(--ai-pale),transparent);
+  }
+  .history-item { position:relative; padding-bottom:32px; }
+  .history-item:last-child { padding-bottom:0; }
+  .history-dot {
+    position:absolute; left:-28px; top:6px;
+    width:13px; height:13px; border:2px solid var(--ai-mid);
+    background:var(--kiji); transform:rotate(45deg);
+  }
+  .history-year {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:12px;
+    letter-spacing:.25em; color:var(--ai-light); margin-bottom:4px;
+  }
+  .history-title {
+    font-family:'Shippori Mincho',serif; font-size:14px;
+    font-weight:600; color:var(--ai-shin); letter-spacing:.1em; margin-bottom:4px;
+  }
+  .history-text {
+    font-family:'Noto Serif JP',serif; font-size:12px;
+    font-weight:300; color:var(--text-muted); line-height:1.8;
+  }
+
+  /* ===== 07 楽しみ方 ===== */
+  .care-sub-image {
+    width:100%; aspect-ratio:16/9;
+    background:var(--surface); border:1px solid var(--border-ai);
+    margin-bottom:32px; position:relative; overflow:hidden;
+  }
+  .care-sub-image-img {
+    width:100%; height:100%; display:block; object-fit:cover;
+  }
+  .care-sub-image::after {
+    content:''; position:absolute; inset:8px;
+    border:1px solid rgba(77,122,94,0.18); pointer-events:none;
+  }
+  .care-steps { display:flex; flex-direction:column; gap:16px; }
+  .care-step {
+    display:flex; gap:20px; align-items:flex-start;
+    padding:20px 24px; background:var(--kiji); border:1px solid var(--border);
+    position:relative; overflow:hidden; transition:border-color .25s;
+  }
+  .care-step:hover { border-color:var(--ai-mid); }
+  .care-step::before {
+    content:''; position:absolute; left:0;top:0;bottom:0;
+    width:3px; background:var(--ai-mid);
+  }
+  .care-step-num {
+    font-family:'Cormorant Garamond',serif; font-size:28px;
+    font-weight:300; color:var(--ai-pale); min-width:32px; line-height:1; margin-top:2px;
+  }
+  .care-step-title {
+    font-family:'Shippori Mincho',serif; font-size:14px;
+    font-weight:700; color:var(--ai-shin); letter-spacing:.1em; margin-bottom:6px;
+  }
+  .care-step-text {
+    font-family:'Noto Serif JP',serif; font-size:13px;
+    font-weight:300; color:var(--text-sub); line-height:1.95;
+  }
+
+  /* ===== 08 販売状況 ===== */
+  .sales-status-large {
+    padding: 32px 40px;
+    background: var(--white);
+    border: 1px solid var(--border-ai);
+    text-align:center; margin-bottom:24px;
+    position:relative; overflow:hidden;
+  }
+  .sales-status-large::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg,transparent,transparent 5px,rgba(31,77,58,0.04) 5px,rgba(31,77,58,0.04) 6px);
+    background-size:20px 20px;
+  }
+  .sales-price-display {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:12px;
+    letter-spacing:.35em; color:var(--text-muted); margin-bottom:8px; position:relative; z-index:1;
+  }
+  .sales-price-number {
+    font-family:'Shippori Mincho',serif;
+    font-size: clamp(26px, 6vw, 32px);
+    font-weight:700;
+    color: var(--ink);
+    letter-spacing:.03em; line-height:1.1; position:relative; z-index:1;
+  }
+  .sales-price-tax {
+    font-family:'Noto Serif JP',serif; font-size:11px;
+    color:var(--text-muted); margin-top:6px; position:relative; font-weight:300; z-index:1;
+  }
+
+  /* 販売オプション：縦2列レイアウト（展示依頼・購入相談を右に） */
+  .sales-options-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1px;
+  }
+  /* 左列：レンタル・詳細問い合わせ ／ 右列：展示依頼・購入相談 */
+  .sales-option {
+    padding: 28px 20px;
+    background: var(--kiji);
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+    min-height: 120px;
+  }
+  .sales-option:hover {
+    background: rgba(31,77,58,0.08);
+    transform: translateY(-2px);
+  }
+  /* 右列の2枠（展示依頼・購入相談）を強調 */
+  .sales-option.primary {
+    background: rgba(31,77,58,0.06);
+    border-left: 3px solid var(--gold);
+  }
+  .sales-option.primary:hover { background: rgba(31,77,58,0.12); }
+
+  .sales-option-icon-box {
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    border: 1px solid rgba(77, 122, 94, 0.22);
+    background: linear-gradient(180deg, var(--surface) 0%, var(--white) 100%);
+  }
+  /* 提供ソースから生成したジェイドRGBAアイコン（CSSフィルター不要） */
+  .sales-bonsai-icon {
+    width: 80%; height: 80%; display: block; object-fit: contain;
+  }
+  .sales-option.primary .sales-bonsai-icon { opacity: 0.96; }
+  .sales-option-title {
+    font-family:'Shippori Mincho',serif; font-size:14px;
+    font-weight:700; color:var(--ai-deep); letter-spacing:.1em;
+  }
+  .sales-option-title.primary-title { color: var(--ai-shin); }
+  .sales-option-text {
+    font-family:'Noto Serif JP',serif; font-size:11px;
+    color:var(--text-muted); line-height:1.6; font-weight:300;
+    margin:0;
+  }
+
+  .sales-admin-row {
+    margin-top:24px;
+    padding:16px 20px;
+    background:rgba(31,77,58,0.06);
+    border:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .sales-admin-label {
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:11px;
+    color:var(--text-muted);
+    letter-spacing:.3em;
+  }
+  .sales-admin-code {
+    font-family:'Shippori Mincho',serif;
+    font-size:17px;
+    color:var(--ai-deep);
+    letter-spacing:.25em;
+    font-weight:700;
+  }
+
+  /* その他お問い合わせ（ページ全体のトンマナに同化した明るい帯＋黒アイコン） */
+  .sales-contact-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: var(--white);
+    border: 1px solid var(--border-ai);
+    box-shadow: 0 2px 10px rgba(31, 77, 58, 0.05);
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    margin-top: 10px;
+  }
+  .sales-contact-bar:hover {
+    background: var(--surface);
+    border-color: var(--ai-mid);
+  }
+  .sales-contact-left {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .sales-contact-icon-box {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    background: var(--kiji);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+  .sales-contact-icon-box svg { stroke: var(--ink-soft); }
+  .sales-contact-title {
+    font-family: 'Shippori Mincho', serif; font-size: 14px;
+    font-weight: 700; color: var(--ai-shin); letter-spacing: .15em;
+  }
+  .sales-contact-sub {
+    font-family: 'Noto Serif JP', serif; font-size: 11px;
+    color: var(--text-muted); font-weight: 300; margin-top: 2px;
+  }
+  .sales-contact-arrow {
+    color: var(--gold-deep); font-size: 18px;
+    font-family: 'Cormorant Garamond', serif;
+    opacity: 0.85;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position:relative; z-index:1; padding:60px 0 40px;
+    border-top:1px solid var(--border); text-align:center; background:var(--ai-shin);
+  }
+  .footer-logo {
+    font-family:'Cormorant Garamond',serif; font-size:13px;
+    letter-spacing:.45em; color:var(--ai-mist); text-transform:uppercase; margin-bottom:8px;
+  }
+  .footer-logo-jp {
+    font-family:'Shippori Mincho',serif; font-size:12px;
+    color:var(--ai-pale); letter-spacing:.3em; margin-bottom:24px;
+  }
+  .footer-deco { width:60px; height:1px; background:rgba(77,122,94,0.35); margin:24px auto; }
+  .footer-copy {
+    font-family:'Cormorant Garamond',serif; font-size:10px;
+    color:var(--ai-pale); letter-spacing:.25em; opacity:.6;
+  }
+
+  /* ===== スクロールアニメーション ===== */
+  .fade-in-on-scroll {
+    opacity:0; transform:translateY(18px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .fade-in-on-scroll.visible { opacity:1; transform:translateY(0); }
+
+  @media (max-width:480px) {
+    .info-grid { grid-template-columns:1fr; }
+    .sales-options-wrap { grid-template-columns:1fr; }
+    .hero-tate { display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-content,
+    .hero-tate,
+    .hero-scroll-hint {
+      animation: none;
+      opacity: 1;
+    }
+    .scroll-line { animation: none; opacity: .5; }
+    .status-dot { animation: none; opacity: .85; }
+    .fade-in-on-scroll {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="hemp-bg"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg">
+    <img class="hero-bg-img" src="images/kinjyakka/hero.webp" alt="" width="960" height="1280" fetchpriority="high" decoding="async">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-kasumi">
+    <div class="kasumi-bar kasumi-bar--w56"></div>
+    <div class="kasumi-bar kasumi-bar--w110"></div>
+    <div class="kasumi-bar kasumi-bar--w36"></div>
+  </div>
+  <div class="hero-tate">
+    <div class="tate-line"></div>
+    <span class="tate-text">文人縁盆栽</span>
+    <div class="tate-line"></div>
+  </div>
+  <div class="hero-content">
+    <h1 class="hero-title">金雀花</h1>
+    <span class="hero-subtitle">― 金に雀の花 ―</span>
+    <div class="hero-tanzaku">
+      <p class="hero-tagline draft">
+        春、金色の花が一斉に咲く姿は、<br>
+        まるで千の光が枝に降り積もるかのよう。<br>
+        一樹に宿る、静謐な生命の輝き。
+      </p>
+    </div>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- 01 メインビジュアル -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">01</span>
+      <span class="section-label-text">Main Visual</span>
+    </div>
+    <div class="main-image-wrapper fade-in-on-scroll">
+      <div class="main-image-frame">
+        <div class="corner-deco tl"></div><div class="corner-deco tr"></div>
+        <div class="corner-deco bl"></div><div class="corner-deco br"></div>
+        <picture class="main-visual-picture">
+          <img class="main-visual-img" src="images/kinjyakka/main-visual.webp" alt="金閣寺を背景にした金雀花の文人縁" width="768" height="1024" loading="lazy" decoding="async">
+        </picture>
+      </div>
+      <div class="image-caption">
+        <span class="image-caption-text">金雀花　樹齢 約50年</span>
+        <span class="image-caption-text">撮影：金閣寺展示時</span>
+      </div>
+      <!-- 世界観カット：夜の京都・八坂の塔 -->
+      <div class="atmosphere-photo">
+        <img src="images/kinjyakka/night.webp" alt="夜の京都・八坂の塔と金雀花" width="720" height="960" loading="lazy" decoding="async">
+      </div>
+      <div class="image-caption">
+        <span class="image-caption-text">夜の京都にて</span>
+        <span class="image-caption-text">Atmosphere — Kyoto Night</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 詳細情報 -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">02</span>
+      <span class="section-label-text">Details</span>
+    </div>
+    <h2 class="section-title-jp">詳細情報</h2>
+    <span class="section-title-en">Details</span>
+    <div class="info-grid fade-in-on-scroll">
+      <div class="info-cell full">
+        <span class="info-label">作品名（正式名・ふりがな）</span>
+        <div class="info-value large">金雀花　<span class="info-reading">キンチャッカ</span></div>
+        <div class="info-en-subtitle">Kin-suzume Bonsai</div>
+      </div>
+      <div class="info-cell">
+        <span class="info-label">樹種</span>
+        <div class="info-value">ムレスズメ<br><span class="info-tree-sub">マメ科の落葉樹／中国名：金雀花</span></div>
+      </div>
+      <div class="info-cell">
+        <span class="info-label">樹齢</span>
+        <div class="info-value">約 <span class="info-age-em">50</span> 年</div>
+      </div>
+      <div class="info-cell">
+        <span class="info-label">価格</span>
+        <div class="info-value price">¥350,000<span class="info-price-suffix">（税込）</span></div>
+      </div>
+      <div class="info-cell full">
+        <span class="info-label">販売状況</span>
+        <div class="status-badge"><span class="status-dot"></span>販売中（在庫あり）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 作品説明 -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">03</span>
+      <span class="section-label-text">Description</span>
+    </div>
+    <h2 class="section-title-jp">この盆栽について</h2>
+    <span class="section-title-en">About This Work</span>
+    <div class="fade-in-on-scroll">
+      <p class="lead-copy draft">春になると、金色の花を一斉に咲かせる。<br>苔盤の静かな佇まいと、まばゆい花の対比が、この一樹の魅力です。</p>
+      <p class="body-text">
+        この樹は、花の季節になると一気に華やぎます。普段の静かな佇まいと、開花時のまばゆさの差が大きく、その変化そのものが作品の魅力です。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 来歴・ストーリー -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">04</span>
+      <span class="section-label-text">Story & History</span>
+    </div>
+    <h2 class="section-title-jp">来歴・ストーリー</h2>
+    <span class="section-title-en">Provenance</span>
+    <div class="story-blocks fade-in-on-scroll">
+
+      <div class="story-block">
+        <div class="story-photo">
+          <img src="images/kinjyakka/story-1.webp" alt="金閣寺を背景にした金雀花の盆栽" width="800" height="800" loading="lazy" decoding="async">
+        </div>
+        <div>
+          <div class="story-block-title">金閣寺での撮影・展示</div>
+          <p class="story-block-text">先月花房を訪れた際、花が満開の時期に金閣寺へ持参し、多くの外国人観光客の方々と写真を撮る機会がありました。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。</p>
+        </div>
+      </div>
+
+      <div class="story-block">
+        <div class="story-photo">
+          <img src="images/kinjyakka/story-2.webp" alt="金雀花の盆栽" width="800" height="800" loading="lazy" decoding="async">
+        </div>
+        <div>
+          <div class="story-block-title">来歴 ― 元・巨人軍 柴田勲氏より</div>
+          <p class="story-block-text">元・巨人軍 柴田勲氏所有歴あり。受賞歴として「盆栽新世紀」コンテスト優勝。その輝かしい来歴が、この樹の品格と価値をさらに高めています。</p>
+        </div>
+      </div>
+
+      <div class="story-block">
+        <div class="story-photo">
+          <img src="images/kinjyakka/story-4.webp" alt="盆栽園に飾られた金雀花" width="800" height="800" loading="lazy" decoding="async">
+        </div>
+        <div>
+          <div class="story-block-title">京都の著名盆栽園での展示</div>
+          <p class="story-block-text">徳川ゆかりの盆栽や樹齢500年級の盆栽が飾られる空間にも並んだ経験を持ちます。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 05 ムレスズメとは -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">05</span>
+      <span class="section-label-text">Knowledge</span>
+    </div>
+    <h2 class="section-title-jp">ムレスズメとは</h2>
+    <span class="section-title-en">About Muresuzume</span>
+    <div class="knowledge-cards fade-in-on-scroll">
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">01</div>
+        <div>
+          <div class="knowledge-title">原産と名前の由来</div>
+          <p class="knowledge-text">中国北部を原産とするマメ科の落葉樹。サクラが散る頃に咲く鮮やかな黄色い花を観賞するため、庭木、垣根、花材などに使われる。中国名は「金雀花」で、和名のムレスズメ（群雀）はこれを日本風にアレンジしたもの。日本へ渡来したのは江戸時代とされる。</p>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">02</div>
+        <div>
+          <div class="knowledge-title">花の特徴</div>
+          <p class="knowledge-text">ムレスズメの開花は４〜６月で、長さ２〜３センチの花が葉の脇で下向きに咲く。花はエニシダに似た蝶形だが、花の後方にある萼筒はエニシダのそれよりも長く、よく目立つ。咲き始めは黄色だが、次第に赤みを帯びてくる。季節外れの狂い咲きも多い。</p>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">03</div>
+        <div>
+          <div class="knowledge-title">「雀」と「金鶏」の話</div>
+          <p class="knowledge-text">細い枝に雀が並んでとまっているように見えためムレスズメになったという説が分かりやすいが、中国での「雀」は日本でいうスズメではなく、黄色い羽毛を持つヒワの仲間のこと。また、別名キンケイジのキンケイ（金鶏）は、中国やミャンマーに生息するキジの仲間。</p>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">04</div>
+        <div>
+          <div class="knowledge-title">葉のかたち</div>
+          <p class="knowledge-text">葉は二対の小葉からなる羽根状で、先端１枚がない「偶数羽状複葉」。枝先側の２枚の方が大きく、短い枝では束になって生じるが、長い枝では互い違いに生じる。</p>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">05</div>
+        <div>
+          <div class="knowledge-title">幹と枝・トゲ</div>
+          <p class="knowledge-text">主だった幹はなく、細い枝が地際から多数生じる。樹皮には黄褐色の斑点があるが、成長に伴って剥離しやすい。枝にあるトゲは前年の葉軸や托葉から変化したものだが、触れてもそれほど痛くない。</p>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <div class="knowledge-num">06</div>
+        <div>
+          <div class="knowledge-title">スキンケアへの活用</div>
+          <p class="knowledge-text">発酵させたムレスズメの根から抽出したエキスは、ファンデーションなどのスキンケアに使われる。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 06 展示履歴 -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">06</span>
+      <span class="section-label-text">Exhibition</span>
+    </div>
+    <h2 class="section-title-jp">展示履歴</h2>
+    <span class="section-title-en">Exhibition History</span>
+    <div class="history-timeline fade-in-on-scroll">
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-year">2026 / Spring</div>
+        <div class="history-title">金閣寺 満開時展示・撮影</div>
+        <p class="history-text">花の満開時に金閣寺へ持参。外国人観光客との交流多数。</p>
+      </div>
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-year">Exhibition Record</div>
+        <div class="history-title">京都、某所　著名盆栽展</div>
+        <p class="history-text">徳川ゆかりの盆栽、樹齢500年級の盆栽が並ぶ空間での展示経験あり。</p>
+      </div>
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-year">Award</div>
+        <div class="history-title">「盆栽新世紀」コンテスト 優勝</div>
+        <p class="history-text">受賞歴として「盆栽新世紀」コンテスト優勝。<span class="draft">来歴に確かな実績を持つ。</span></p>
+      </div>
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-year">Provenance</div>
+        <div class="history-title">元・巨人軍 柴田勲氏 旧蔵</div>
+        <p class="history-text draft">著名な前所有者のもとで大切に育てられてきた品格ある一樹。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 楽しみ方 -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">07</span>
+      <span class="section-label-text">Enjoy</span>
+    </div>
+    <h2 class="section-title-jp">楽しみ方</h2>
+    <span class="section-title-en">How to Enjoy</span>
+    <div class="care-sub-image fade-in-on-scroll">
+      <img class="care-sub-image-img" src="images/kinjyakka/sub-care.webp" alt="水景のそばに飾られた金雀花の盆栽" width="960" height="540" loading="lazy" decoding="async">
+    </div>
+    <div class="care-steps fade-in-on-scroll">
+      <div class="care-step">
+        <div class="care-step-num">1</div>
+        <div>
+          <div class="care-step-title">置き場所・日当たり</div>
+          <p class="care-step-text draft">春〜秋は屋外の日当たりの良い場所で管理します。直射日光を好みますが、夏の西日は避けてください。冬は霜から守り、霜が当たらない軒下などで管理します。</p>
+        </div>
+      </div>
+      <div class="care-step">
+        <div class="care-step-num">2</div>
+        <div>
+          <div class="care-step-title">水やり</div>
+          <p class="care-step-text draft">春〜秋は土の表面が乾いたらたっぷりと与えます。花時は特に乾燥しやすいため、朝夕2回を目安に。冬は乾かし気味に管理し、根腐れに注意します。</p>
+        </div>
+      </div>
+      <div class="care-step">
+        <div class="care-step-num">3</div>
+        <div>
+          <div class="care-step-title">花の楽しみ方</div>
+          <p class="care-step-text draft">春の開花期（3〜4月）が最大の見どころです。金色の花が枝を覆う様子を正面から鑑賞ください。花後に軽く剪定することで樹形が整います。</p>
+        </div>
+      </div>
+      <div class="care-step">
+        <div class="care-step-num">4</div>
+        <div>
+          <div class="care-step-title">肥料・植替え</div>
+          <p class="care-step-text draft">開花後〜秋にかけて緩効性肥料を施します。植替えは2〜3年に1度、春の芽出し前が適期。根を整理し、新鮮な土に替えることで樹の活力を保ちます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 販売状況 -->
+<section>
+  <div class="container">
+    <div class="section-label">
+      <span class="section-label-num">08</span>
+      <span class="section-label-text">Sales</span>
+    </div>
+    <h2 class="section-title-jp">販売状況</h2>
+    <span class="section-title-en">Availability</span>
+
+    <div class="sales-status-large fade-in-on-scroll">
+      <div class="sales-price-display">販売価格（税込）</div>
+      <div class="sales-price-number">¥350,000</div>
+      <div class="sales-price-tax">税込 ／ 送料・引取方法は別途ご相談</div>
+    </div>
+
+    <!-- 2列グリッド：左＝レンタル・詳細問い合わせ／右＝展示依頼・購入相談（強調） -->
+    <div class="sales-options-wrap fade-in-on-scroll">
+
+      <!-- 左列 -->
+      <div class="sales-option">
+        <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
+        <div class="sales-option-title">レンタル</div>
+        <p class="sales-option-text">期間限定レンタルのご相談</p>
+      </div>
+
+      <!-- 右列（強調） -->
+      <div class="sales-option primary">
+        <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
+        <div class="sales-option-title primary-title">展示依頼</div>
+        <p class="sales-option-text">イベント・ギャラリー等への一時貸出</p>
+      </div>
+
+      <!-- 左列 -->
+      <div class="sales-option">
+        <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
+        <div class="sales-option-title">詳細問い合わせ</div>
+        <p class="sales-option-text">作品詳細や状態に関するご質問</p>
+      </div>
+
+      <!-- 右列（強調） -->
+      <div class="sales-option primary">
+        <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
+        <div class="sales-option-title primary-title">購入相談</div>
+        <p class="sales-option-text">ご購入・譲渡のご相談</p>
+      </div>
+
+    </div>
+
+    <!-- その他お問い合わせ -->
+    <div class="sales-contact-bar fade-in-on-scroll">
+      <div class="sales-contact-left">
+        <div class="sales-contact-icon-box" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="1"/>
+            <path d="M3 7l9 6 9-6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="sales-contact-title">その他お問い合わせ</div>
+          <div class="sales-contact-sub">上記以外のご質問・ご相談はこちら</div>
+        </div>
+      </div>
+      <div class="sales-contact-arrow">→</div>
+    </div>
+
+    <!-- 管理番号 -->
+    <div class="sales-admin-row">
+      <span class="sales-admin-label">管理番号</span>
+      <span class="sales-admin-code">KIN-001</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- フッター -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">Bunjin-ju Bonsai Collection</div>
+    <div class="footer-logo-jp">文人縁盆栽コレクション</div>
+    <div class="footer-deco"></div>
+    <p class="footer-copy">© 2026 Bonsai Collection. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in-on-scroll').forEach(function (el) {
+    io.observe(el);
+  });
+  document.querySelectorAll('.knowledge-card,.story-block,.care-step,.history-item').forEach(function (el, i) {
+    el.style.transitionDelay = (i * 0.07) + 's';
+    el.classList.add('fade-in-on-scroll');
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
