@@ -105,7 +105,8 @@
   .hero-bg-img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    object-fit: cover; display: block; border: 0;
+    object-fit: cover; object-position: 50% 38%;
+    display: block; border: 0;
     opacity: 0.95;
     filter: saturate(1.2) contrast(1.08) brightness(1.02);
   }
@@ -113,9 +114,9 @@
     position: absolute; inset: 0;
     background: linear-gradient(180deg,
       rgba(15,38,28,0.00)  0%,
-      rgba(15,38,28,0.00) 40%,
-      rgba(11,28,20,0.35) 72%,
-      rgba(3,10,5,0.97) 100%);
+      rgba(15,38,28,0.00) 36%,
+      rgba(11,28,20,0.38) 64%,
+      rgba(3,10,5,0.98) 100%);
   }
 
   /* 言語切替（ヒーロー右上・和モダン／読みやすさ優先） */
@@ -172,20 +173,10 @@
     background: rgba(170, 196, 183, 0.55);
     flex-shrink: 0;
   }
-  .hero-kasumi {
-    position: absolute; bottom: 37%; left: 0; right: 0;
-    padding: 0 28px;
-    display: flex; align-items: center; gap: 8px;
-    z-index: 1; opacity: 0.3;
-  }
-  .kasumi-bar { height: 2px; background: var(--ai-mist); border-radius: 1px; }
-  .kasumi-bar--w56  { width: 56px; }
-  .kasumi-bar--w110 { width: 110px; }
-  .kasumi-bar--w36  { width: 36px; }
   .hero-tate {
     position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
     z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 14px;
-    opacity: 0; animation: fadeIn 1.5s ease-out 1.4s forwards;
+    opacity: 1;
   }
   .tate-line { width: 1px; height: 44px; background: rgba(170,196,183,0.35); }
   .tate-text {
@@ -194,23 +185,21 @@
   }
   .hero-content {
     position: relative; z-index: 2;
-    padding: 0 24px 72px;
-    animation: fadeUp 1s ease-out 0.4s both;
+    padding: 0 24px calc(20px + env(safe-area-inset-bottom, 0px));
   }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
   .hero-title {
     font-family: 'Shippori Mincho', serif;
     font-size: clamp(52px,13vw,88px); font-weight: 800;
     line-height: 1.05; letter-spacing: .06em;
-    color: var(--white); margin-bottom: 10px;
+    color: var(--white); margin-bottom: 8px;
   }
   .hero-subtitle {
     font-family: 'Shippori Mincho', serif;
     font-size: clamp(13px,3.2vw,17px); font-weight: 400;
     color: var(--gold-light); letter-spacing: .25em;
-    margin-bottom: 36px; display: block;
+    /* 短冊ボックス直前まで詰める（行ボックスと枠のギャップ最小） */
+    margin-bottom: 4px; display: block;
   }
   .hero-tanzaku {
     display: inline-block;
@@ -225,16 +214,15 @@
     color: var(--white);
   }
   .hero-scroll-hint {
-    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
     z-index: 3; display: flex; flex-direction: column; align-items: center;
-    opacity: 0; animation: fadeIn 2s ease-out 2s forwards;
+    opacity: 0.45;
   }
   .scroll-line {
-    width: 1px; height: 44px;
+    width: 1px; height: 36px;
     background: linear-gradient(180deg, var(--ai-pale), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
+    opacity: 0.55;
   }
-  @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
 
   /* ===== 砂紋（さもん）セパレーター ===== */
   .sammon-sep {
@@ -770,13 +758,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-content,
-    .hero-tate,
-    .hero-scroll-hint {
-      animation: none;
-      opacity: 1;
-    }
-    .scroll-line { animation: none; opacity: .5; }
+    .scroll-line { opacity: .5; }
     .status-dot { animation: none; opacity: .85; }
     .fade-in-on-scroll {
       transition: none;
@@ -804,11 +786,6 @@
   <div class="hero-bg">
     <img class="hero-bg-img" src="images/kinjyakka/hero.webp" alt="" width="960" height="1280" fetchpriority="high" decoding="async">
     <div class="hero-overlay"></div>
-  </div>
-  <div class="hero-kasumi">
-    <div class="kasumi-bar kasumi-bar--w56"></div>
-    <div class="kasumi-bar kasumi-bar--w110"></div>
-    <div class="kasumi-bar kasumi-bar--w36"></div>
   </div>
   <div class="hero-tate">
     <div class="tate-line"></div>
