@@ -118,7 +118,7 @@
       rgba(3,10,5,0.97) 100%);
   }
 
-  /* 言語切替（ヒーロー右上・和モダン極細） */
+  /* 言語切替（ヒーロー右上・和モダン／読みやすさ優先） */
   .lang-switch {
     position: absolute;
     top: max(12px, env(safe-area-inset-top));
@@ -126,41 +126,50 @@
     z-index: 25;
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 2px;
+    padding: 6px 6px;
+    border-radius: 3px;
+    background: rgba(6, 22, 14, 0.52);
+    border: 1px solid rgba(170, 196, 183, 0.42);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.18);
     font-family: 'Cormorant Garamond', serif;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.28em;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
   }
   .lang-switch-btn {
     appearance: none;
     -webkit-appearance: none;
     margin: 0;
-    padding: 8px 10px;
+    padding: 8px 11px;
     border: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 2px solid transparent;
     background: transparent;
-    color: rgba(255, 255, 255, 0.46);
+    color: rgba(255, 255, 255, 0.78);
     cursor: pointer;
     font: inherit;
+    font-weight: 500;
     text-transform: uppercase;
     transition: color 0.28s ease, border-color 0.28s ease, opacity 0.28s ease;
   }
   .lang-switch-btn:hover {
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 253, 248, 0.98);
   }
   .lang-switch-btn.is-active {
-    color: rgba(250, 250, 247, 0.95);
-    border-bottom-color: rgba(170, 196, 183, 0.5);
+    color: #fafaf7;
+    font-weight: 600;
+    border-bottom-color: rgba(212, 184, 118, 0.82);
   }
   .lang-switch-btn:focus-visible {
-    outline: 1px solid rgba(212, 184, 118, 0.55);
-    outline-offset: 3px;
+    outline: 1px solid rgba(212, 184, 118, 0.72);
+    outline-offset: 2px;
   }
   .lang-switch-divider {
     width: 1px;
-    height: 16px;
-    background: rgba(170, 196, 183, 0.28);
+    height: 17px;
+    background: rgba(170, 196, 183, 0.55);
     flex-shrink: 0;
   }
   .hero-kasumi {
