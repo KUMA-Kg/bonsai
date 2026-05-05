@@ -80,6 +80,7 @@
     will-change: transform;
   }
 
+
   /* AIが生成した仮テキストのマーカー（色は地の色を継承） */
   .draft {
     color: inherit;
@@ -97,6 +98,7 @@
   .hero {
     position: relative;
     min-height: 100svh;
+    min-height: 100dvh;
     display: flex; flex-direction: column; justify-content: flex-end;
     overflow: hidden;
     background: var(--ai-shin);
@@ -752,9 +754,19 @@
   .fade-in-on-scroll.visible { opacity:1; transform:translateY(0); }
 
   @media (max-width:480px) {
+    .hemp-bg {
+      transform: translate3d(0, 0, 0) scale(1);
+      --parallax-shift: 0px;
+      will-change: auto;
+    }
     .info-grid { grid-template-columns:1fr; }
     .sales-options-wrap { grid-template-columns:1fr; }
     .hero-tate { display:none; }
+    /* 画面下から入るフェードを短く・移動量を抑えてモバイルのカクつきを軽減 */
+    .fade-in-on-scroll {
+      transform: translateY(10px);
+      transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1542,13 +1554,40 @@
   });
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mqPhone = window.matchMedia('(max-width: 480px)');
   var hempBg = document.querySelector('.hemp-bg');
+  var parallaxSmooth = 0;
+  var parallaxTarget = 0;
+  var parallaxRafId = null;
   var ticking = false;
+
+  function isParallaxOff() {
+    return reduceMotion || mqPhone.matches;
+  }
+
+  function applyParallaxSmooth() {
+    parallaxRafId = null;
+    if (!hempBg || isParallaxOff()) return;
+    parallaxSmooth += (parallaxTarget - parallaxSmooth) * 0.22;
+    hempBg.style.setProperty('--parallax-shift', parallaxSmooth.toFixed(2) + 'px');
+    if (Math.abs(parallaxTarget - parallaxSmooth) > 0.08) {
+      parallaxRafId = window.requestAnimationFrame(applyParallaxSmooth);
+    }
+  }
+
   function onScrollEffects() {
     ticking = false;
+    if (!hempBg || reduceMotion) return;
+    if (isParallaxOff()) {
+      hempBg.style.setProperty('--parallax-shift', '0px');
+      parallaxSmooth = 0;
+      parallaxTarget = 0;
+      return;
+    }
     var y = window.scrollY || window.pageYOffset;
-    if (hempBg && !reduceMotion) {
-      hempBg.style.setProperty('--parallax-shift', (y * 0.008) + 'px');
+    parallaxTarget = y * 0.008;
+    if (!parallaxRafId) {
+      parallaxRafId = window.requestAnimationFrame(applyParallaxSmooth);
     }
   }
   function requestTick() {
@@ -1557,6 +1596,27 @@
       requestAnimationFrame(onScrollEffects);
     }
   }
+
+  function syncMediaQueryParallax() {
+    if (!hempBg || reduceMotion) return;
+    if (isParallaxOff()) {
+      hempBg.style.setProperty('--parallax-shift', '0px');
+      parallaxSmooth = 0;
+      parallaxTarget = 0;
+    } else {
+      var y = window.scrollY || window.pageYOffset;
+      parallaxTarget = y * 0.008;
+      parallaxSmooth = parallaxTarget;
+      hempBg.style.setProperty('--parallax-shift', parallaxSmooth.toFixed(2) + 'px');
+    }
+  }
+
+  if (typeof mqPhone.addEventListener === 'function') {
+    mqPhone.addEventListener('change', syncMediaQueryParallax);
+  } else if (typeof mqPhone.addListener === 'function') {
+    mqPhone.addListener(syncMediaQueryParallax);
+  }
+
   window.addEventListener('scroll', requestTick, { passive: true });
   onScrollEffects();
 })();
