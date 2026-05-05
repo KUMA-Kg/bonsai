@@ -1,0 +1,12 @@
+Default texture (when using _yosegi_source_download.jpg from the build script):
+
+- File: Japanese puzzle box (yosegi) - closed.jpg
+- Author: Eugene Alvin Villar (seav), Wikimedia Commons
+- License: CC BY-SA 4.0
+- https://commons.wikimedia.org/wiki/File:Japanese_puzzle_box_(yosegi)_-_closed.jpg
+
+Processed derivative (asanoha-bg.webp) must stay under CC BY-SA 4.0 if distributed;
+credit the author when publishing the photo source. On-page credit is optional for
+a heavily processed background; keep this file in the repo for license traceability.
+
+If you replace the source with your own photograph, remove or update this file.

@@ -12,6 +12,9 @@
    * ブロック順: トークン → ベース → ヒーロー → 共通セクション → Main Visual
    * → 詳細情報 → 説明 → 来歴 → 知識 → 展示履歴 → 楽しみ方 → 販売 → フッター
    * → フェード／メディアクエリ
+   *
+   * 背景：asanoha-photo-bg.webp（ごく薄く敷く）
+   * セクション間：砂紋 .sammon-sep
    */
   :root {
     /* 翡翠 (Jade)：基調色／テキスト／ボーダー */
@@ -25,6 +28,8 @@
     --kiji:      #fafaf7;
     --kiji-deep: #f0ede4;
     --white:     #ffffff;
+    /* 透かし麻柄用の地（白〜極薄和紙グレー） */
+    --washi:     #fefefe;
     /* テキスト */
     --text-main: #1f4d3a;
     --text-sub:  #4d7a5e;
@@ -47,22 +52,32 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background-color: var(--kiji);
+    background-color: var(--washi);
     color: var(--text-main);
     font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
     line-height: 1.8;
     overflow-x: hidden;
   }
 
-  /* 麻柄テクスチャ */
+  /* ----- 背景：Gemini 生成の麻の葉画像（全面 cover）----- */
   .hemp-bg {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(31,77,58,0.04) 3px, rgba(31,77,58,0.04) 4px),
-      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(31,77,58,0.04) 3px, rgba(31,77,58,0.04) 4px),
-      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(31,77,58,0.02) 10px, rgba(31,77,58,0.02) 11px),
-      repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(31,77,58,0.02) 10px, rgba(31,77,58,0.02) 11px);
-    background-size: 20px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* わずかな縦移動時に端が抜けないよう少し余裕 */
+    min-height: 115vh;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("images/kinjyakka/asanoha-photo-bg.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* 読みやすさ優先：麻柄はごく薄い透かし程度 */
+    opacity: 0.032;
+    transform: translate3d(0, var(--parallax-shift, 0px), 0) scale(1.05);
+    transform-origin: center top;
+    will-change: transform;
   }
 
   /* AIが生成した仮テキストのマーカー（色は地の色を継承） */
@@ -101,6 +116,52 @@
       rgba(15,38,28,0.00) 40%,
       rgba(11,28,20,0.35) 72%,
       rgba(3,10,5,0.97) 100%);
+  }
+
+  /* 言語切替（ヒーロー右上・和モダン極細） */
+  .lang-switch {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+  }
+  .lang-switch-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    padding: 8px 10px;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.46);
+    cursor: pointer;
+    font: inherit;
+    text-transform: uppercase;
+    transition: color 0.28s ease, border-color 0.28s ease, opacity 0.28s ease;
+  }
+  .lang-switch-btn:hover {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .lang-switch-btn.is-active {
+    color: rgba(250, 250, 247, 0.95);
+    border-bottom-color: rgba(170, 196, 183, 0.5);
+  }
+  .lang-switch-btn:focus-visible {
+    outline: 1px solid rgba(212, 184, 118, 0.55);
+    outline-offset: 3px;
+  }
+  .lang-switch-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(170, 196, 183, 0.28);
+    flex-shrink: 0;
   }
   .hero-kasumi {
     position: absolute; bottom: 37%; left: 0; right: 0;
@@ -166,15 +227,54 @@
   }
   @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
 
+  /* ===== 砂紋（さもん）セパレーター ===== */
+  .sammon-sep {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    /* セクション境：上3 / 下7 で詰めつつ、波形の余白を確保 */
+    padding: clamp(14px, 2.8vw, 22px) 0 clamp(32px, 6.6vw, 52px) 0;
+    /* ごく薄いグラデーションで写真地紋との境界をぼかし、波線へ誘導 */
+    background: linear-gradient(
+      180deg,
+      rgba(254, 254, 254, 0) 0%,
+      rgba(240, 240, 240, 0.35) 38%,
+      rgba(226, 226, 226, 0.45) 50%,
+      rgba(240, 240, 240, 0.35) 62%,
+      rgba(254, 254, 254, 0) 100%
+    );
+    pointer-events: none;
+  }
+  .sammon-sep-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .sammon-svg {
+    display: block;
+    width: 100%;
+    height: clamp(42px, 11vw, 58px);
+    overflow: visible;
+  }
+  .sammon-svg path {
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: #e0e0e0;
+    fill: none;
+  }
+
   /* ===== SECTIONS ===== */
   section {
     position: relative; z-index: 1;
-    padding: 80px 0; border-top: 1px solid var(--border);
+    /* 開始を上げる：上側 3 / 下側 7 の比率でパディング（従来より全体を詰める） */
+    padding: clamp(24px, 4.2vw, 34px) 0 clamp(56px, 10vw, 80px) 0;
+    border-top: none;
   }
-  section:nth-child(even) { background: rgba(31,77,58,0.04); }
+  section:nth-of-type(even) { background: rgba(31,77,58,0.028); }
 
   .section-label {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 40px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
   }
   .section-label-num {
     font-family: 'Cormorant Garamond', serif;
@@ -196,7 +296,7 @@
     font-family: 'Cormorant Garamond', serif; font-style: italic;
     font-size: 12px; letter-spacing: .35em;
     color: var(--ai-light); text-transform: uppercase;
-    display: block; margin-bottom: 36px;
+    display: block; margin-bottom: clamp(22px, 4vw, 28px);
   }
 
   /* ===== 01 Main Visual ===== */
@@ -256,10 +356,14 @@
 
   /* ===== 02 詳細情報 ===== */
   .info-grid {
-    display:grid; grid-template-columns:1fr 1fr;
-    gap:1px; background:var(--border); border:1px solid var(--border); margin-top:32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 32px;
   }
-  .info-cell { background:var(--kiji); padding:20px 24px; }
+  .info-cell { background: var(--kiji); padding: 20px 24px; }
   .info-cell.full { grid-column:1/-1; }
   .info-label {
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:10px;
@@ -585,7 +689,7 @@
 
   /* ===== FOOTER ===== */
   footer {
-    position:relative; z-index:1; padding:60px 0 40px;
+    position:relative; z-index:1; padding:44px 0 36px;
     border-top:1px solid var(--border); text-align:center; background:var(--ai-shin);
   }
   .footer-logo {
@@ -601,6 +705,47 @@
     font-family:'Cormorant Garamond',serif; font-size:10px;
     color:var(--ai-pale); letter-spacing:.25em; opacity:.6;
   }
+
+  /* ===== 英語表示時タイポ（セリフ軸・Cormorant 中心） ===== */
+  body.lang-en {
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  }
+  body.lang-en .hero-tagline,
+  body.lang-en .lead-copy,
+  body.lang-en .body-text,
+  body.lang-en .story-block-text,
+  body.lang-en .knowledge-text,
+  body.lang-en .history-text,
+  body.lang-en .care-step-text,
+  body.lang-en .sales-option-text,
+  body.lang-en .sales-price-tax,
+  body.lang-en .sales-contact-sub,
+  body.lang-en .info-tree-sub,
+  body.lang-en .info-price-suffix {
+    font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+  }
+  body.lang-en .hero-title,
+  body.lang-en .hero-subtitle,
+  body.lang-en .section-title-jp,
+  body.lang-en .info-value,
+  body.lang-en .status-badge,
+  body.lang-en .story-block-title,
+  body.lang-en .knowledge-title,
+  body.lang-en .history-title,
+  body.lang-en .care-step-title,
+  body.lang-en .sales-option-title,
+  body.lang-en .sales-contact-title,
+  body.lang-en .image-caption-text,
+  body.lang-en .footer-logo-jp,
+  body.lang-en .sales-price-number {
+    font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+    letter-spacing: 0.04em;
+  }
+  body.lang-en .hero-title { font-weight: 600; }
+  /* 英語時は英字サブタイトル行を省略（見出し本体を英語化済み） */
+  body.lang-en .section-title-en { display: none; }
 
   /* ===== スクロールアニメーション ===== */
   .fade-in-on-scroll {
@@ -629,15 +774,24 @@
       opacity: 1;
       transform: none;
     }
+    .hemp-bg {
+      transform: none;
+      --parallax-shift: 0px;
+      will-change: auto;
+    }
   }
 </style>
 </head>
 <body>
-
-<div class="hemp-bg"></div>
+<div class="hemp-bg" aria-hidden="true"></div>
 
 <!-- HERO -->
 <div class="hero">
+  <div class="lang-switch" role="group" id="lang-switch" aria-label="言語を選ぶ">
+    <button type="button" class="lang-switch-btn is-active" id="lang-ja" data-lang="ja" aria-pressed="true">JP</button>
+    <span class="lang-switch-divider" aria-hidden="true"></span>
+    <button type="button" class="lang-switch-btn" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+  </div>
   <div class="hero-bg">
     <img class="hero-bg-img" src="images/kinjyakka/hero.webp" alt="" width="960" height="1280" fetchpriority="high" decoding="async">
     <div class="hero-overlay"></div>
@@ -649,14 +803,14 @@
   </div>
   <div class="hero-tate">
     <div class="tate-line"></div>
-    <span class="tate-text">文人縁盆栽</span>
+    <span class="tate-text" data-i18n="tate_vertical">文人縁盆栽</span>
     <div class="tate-line"></div>
   </div>
   <div class="hero-content">
-    <h1 class="hero-title">金雀花</h1>
-    <span class="hero-subtitle">― 金に雀の花 ―</span>
+    <h1 class="hero-title" data-i18n="hero_title">金雀花</h1>
+    <span class="hero-subtitle" data-i18n="hero_subtitle">― 金に雀の花 ―</span>
     <div class="hero-tanzaku">
-      <p class="hero-tagline draft">
+      <p class="hero-tagline draft" data-i18n-html="hero_tagline_html">
         春、金色の花が一斉に咲く姿は、<br>
         まるで千の光が枝に降り積もるかのよう。<br>
         一樹に宿る、静謐な生命の輝き。
@@ -665,6 +819,18 @@
   </div>
   <div class="hero-scroll-hint" aria-hidden="true">
     <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C210,30 420,44 630,33 C840,26 1020,41 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C260,46 480,28 720,39 C920,32 1080,44 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C190,38 380,26 560,35 C760,29 960,40 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C280,34 540,50 800,38 C980,32 1120,43 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C320,33 640,42 960,35 1080,31 1200,36.5" opacity="0.42" stroke-width="0.6"/>
+    </svg>
   </div>
 </div>
 
@@ -680,24 +846,36 @@
         <div class="corner-deco tl"></div><div class="corner-deco tr"></div>
         <div class="corner-deco bl"></div><div class="corner-deco br"></div>
         <picture class="main-visual-picture">
-          <img class="main-visual-img" src="images/kinjyakka/main-visual.webp" alt="金閣寺を背景にした金雀花の文人縁" width="768" height="1024" loading="lazy" decoding="async">
+          <img class="main-visual-img" src="images/kinjyakka/main-visual.webp" alt="金閣寺を背景にした金雀花の文人縁" data-i18n-alt="alt_main_visual" width="768" height="1024" loading="lazy" decoding="async">
         </picture>
       </div>
       <div class="image-caption">
-        <span class="image-caption-text">金雀花　樹齢 約50年</span>
-        <span class="image-caption-text">撮影：金閣寺展示時</span>
+        <span class="image-caption-text" data-i18n="caption_mv_1">金雀花　樹齢 約50年</span>
+        <span class="image-caption-text" data-i18n="caption_mv_2">撮影：金閣寺展示時</span>
       </div>
       <!-- 世界観カット：夜の京都・八坂の塔 -->
       <div class="atmosphere-photo">
-        <img src="images/kinjyakka/night.webp" alt="夜の京都・八坂の塔と金雀花" width="720" height="960" loading="lazy" decoding="async">
+        <img src="images/kinjyakka/night.webp" alt="夜の京都・八坂の塔と金雀花" data-i18n-alt="alt_night" width="720" height="960" loading="lazy" decoding="async">
       </div>
       <div class="image-caption">
-        <span class="image-caption-text">夜の京都にて</span>
-        <span class="image-caption-text">Atmosphere — Kyoto Night</span>
+        <span class="image-caption-text" data-i18n="caption_atmo_1">夜の京都にて</span>
+        <span class="image-caption-text" data-i18n="caption_atmo_2">Atmosphere — Kyoto Night</span>
       </div>
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C210,30 420,44 630,33 C840,26 1020,41 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C260,46 480,28 720,39 C920,32 1080,44 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C190,38 380,26 560,35 C760,29 960,40 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C280,34 540,50 800,38 C980,32 1120,43 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C320,33 640,42 960,35 1080,31 1200,36.5" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 02 詳細情報 -->
 <section>
@@ -706,33 +884,45 @@
       <span class="section-label-num">02</span>
       <span class="section-label-text">Details</span>
     </div>
-    <h2 class="section-title-jp">詳細情報</h2>
+    <h2 class="section-title-jp" data-i18n="sec_details_h2">詳細情報</h2>
     <span class="section-title-en">Details</span>
     <div class="info-grid fade-in-on-scroll">
       <div class="info-cell full">
-        <span class="info-label">作品名（正式名・ふりがな）</span>
-        <div class="info-value large">金雀花　<span class="info-reading">キンチャッカ</span></div>
-        <div class="info-en-subtitle">Kin-suzume Bonsai</div>
+        <span class="info-label" data-i18n="info_label_work_name">作品名（正式名・ふりがな）</span>
+        <div class="info-value large" data-i18n-html="info_work_name_html">金雀花　<span class="info-reading">キンチャッカ</span></div>
+        <div class="info-en-subtitle" data-i18n="info_work_sub_en">Kin-suzume Bonsai</div>
       </div>
       <div class="info-cell">
-        <span class="info-label">樹種</span>
-        <div class="info-value">ムレスズメ<br><span class="info-tree-sub">マメ科の落葉樹／中国名：金雀花</span></div>
+        <span class="info-label" data-i18n="info_label_species">樹種</span>
+        <div class="info-value" data-i18n-html="info_species_html">ムレスズメ<br><span class="info-tree-sub">マメ科の落葉樹／中国名：金雀花</span></div>
       </div>
       <div class="info-cell">
-        <span class="info-label">樹齢</span>
-        <div class="info-value">約 <span class="info-age-em">50</span> 年</div>
+        <span class="info-label" data-i18n="info_label_age">樹齢</span>
+        <div class="info-value" data-i18n-html="info_age_html">約 <span class="info-age-em">50</span> 年</div>
       </div>
       <div class="info-cell">
-        <span class="info-label">価格</span>
-        <div class="info-value price">¥350,000<span class="info-price-suffix">（税込）</span></div>
+        <span class="info-label" data-i18n="info_label_price">価格</span>
+        <div class="info-value price" data-i18n-html="info_price_html">¥350,000<span class="info-price-suffix">（税込）</span></div>
       </div>
       <div class="info-cell full">
-        <span class="info-label">販売状況</span>
-        <div class="status-badge"><span class="status-dot"></span>販売中（在庫あり）</div>
+        <span class="info-label" data-i18n="info_label_sale_status">販売状況</span>
+        <div class="status-badge"><span class="status-dot"></span><span data-i18n="info_sale_status_text">販売中（在庫あり）</span></div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,37 C215,31 415,43 630,34 C835,27 1015,40 1200,36" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,41 C255,47 475,29 705,38 C895,31 1075,45 1200,38" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,31 C175,39 385,27 545,34 C735,28 935,41 1200,33" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,43 C270,33 545,51 795,39 C965,31 1145,44 1200,40" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,39 C335,34 645,43 935,34 1095,30 1200,37" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 03 作品説明 -->
 <section>
@@ -741,16 +931,28 @@
       <span class="section-label-num">03</span>
       <span class="section-label-text">Description</span>
     </div>
-    <h2 class="section-title-jp">この盆栽について</h2>
+    <h2 class="section-title-jp" data-i18n="sec_about_h2">この盆栽について</h2>
     <span class="section-title-en">About This Work</span>
     <div class="fade-in-on-scroll">
-      <p class="lead-copy draft">春になると、金色の花を一斉に咲かせる。<br>苔盤の静かな佇まいと、まばゆい花の対比が、この一樹の魅力です。</p>
-      <p class="body-text">
+      <p class="lead-copy draft" data-i18n-html="about_lead_html">春になると、金色の花を一斉に咲かせる。<br>苔盤の静かな佇まいと、まばゆい花の対比が、この一樹の魅力です。</p>
+      <p class="body-text" data-i18n="about_body">
         この樹は、花の季節になると一気に華やぎます。普段の静かな佇まいと、開花時のまばゆさの差が大きく、その変化そのものが作品の魅力です。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。
       </p>
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C208,31 418,43 628,34 C838,26 1018,42 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C262,46 478,29 723,39 C913,31 1083,45 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C192,39 382,26 558,36 C752,29 962,41 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C284,34 548,51 798,39 C983,31 1123,44 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C306,34 628,43 942,34 1092,32 1200,36.2" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 04 来歴・ストーリー -->
 <section>
@@ -759,43 +961,55 @@
       <span class="section-label-num">04</span>
       <span class="section-label-text">Story & History</span>
     </div>
-    <h2 class="section-title-jp">来歴・ストーリー</h2>
+    <h2 class="section-title-jp" data-i18n="sec_story_h2">来歴・ストーリー</h2>
     <span class="section-title-en">Provenance</span>
     <div class="story-blocks fade-in-on-scroll">
 
       <div class="story-block">
         <div class="story-photo">
-          <img src="images/kinjyakka/story-1.webp" alt="金閣寺を背景にした金雀花の盆栽" width="800" height="800" loading="lazy" decoding="async">
+          <img src="images/kinjyakka/story-1.webp" alt="金閣寺を背景にした金雀花の盆栽" data-i18n-alt="alt_story_1" width="800" height="800" loading="lazy" decoding="async">
         </div>
         <div>
-          <div class="story-block-title">金閣寺での撮影・展示</div>
-          <p class="story-block-text">先月花房を訪れた際、花が満開の時期に金閣寺へ持参し、多くの外国人観光客の方々と写真を撮る機会がありました。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。</p>
+          <div class="story-block-title" data-i18n="story_1_title">金閣寺での撮影・展示</div>
+          <p class="story-block-text" data-i18n="story_1_text">先月花房を訪れた際、花が満開の時期に金閣寺へ持参し、多くの外国人観光客の方々と写真を撮る機会がありました。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。</p>
         </div>
       </div>
 
       <div class="story-block">
         <div class="story-photo">
-          <img src="images/kinjyakka/story-2.webp" alt="金雀花の盆栽" width="800" height="800" loading="lazy" decoding="async">
+          <img src="images/kinjyakka/story-2.webp" alt="金雀花の盆栽" data-i18n-alt="alt_story_2" width="800" height="800" loading="lazy" decoding="async">
         </div>
         <div>
-          <div class="story-block-title">来歴 ― 元・巨人軍 柴田勲氏より</div>
-          <p class="story-block-text">元・巨人軍 柴田勲氏所有歴あり。受賞歴として「盆栽新世紀」コンテスト優勝。その輝かしい来歴が、この樹の品格と価値をさらに高めています。</p>
+          <div class="story-block-title" data-i18n="story_2_title">来歴 ― 元・巨人軍 柴田勲氏より</div>
+          <p class="story-block-text" data-i18n="story_2_text">元・巨人軍 柴田勲氏所有歴あり。受賞歴として「盆栽新世紀」コンテスト優勝。その輝かしい来歴が、この樹の品格と価値をさらに高めています。</p>
         </div>
       </div>
 
       <div class="story-block">
         <div class="story-photo">
-          <img src="images/kinjyakka/story-4.webp" alt="盆栽園に飾られた金雀花" width="800" height="800" loading="lazy" decoding="async">
+          <img src="images/kinjyakka/story-4.webp" alt="盆栽園に飾られた金雀花" data-i18n-alt="alt_story_4" width="800" height="800" loading="lazy" decoding="async">
         </div>
         <div>
-          <div class="story-block-title">京都の著名盆栽園での展示</div>
-          <p class="story-block-text">徳川ゆかりの盆栽や樹齢500年級の盆栽が飾られる空間にも並んだ経験を持ちます。</p>
+          <div class="story-block-title" data-i18n="story_3_title">京都の著名盆栽園での展示</div>
+          <p class="story-block-text" data-i18n="story_3_text">徳川ゆかりの盆栽や樹齢500年級の盆栽が飾られる空間にも並んだ経験を持ちます。</p>
         </div>
       </div>
 
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C212,29 428,46 634,33 C848,26 1024,41 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,41 C266,46 486,29 716,41 C928,31 1090,43 1200,38" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C182,39 392,26 558,37 C764,29 964,41 1200,33" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,45 C274,34 548,53 792,41 C974,34 1140,45 1200,38" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C332,34 642,43 948,34 1088,30 1200,36.5" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 05 ムレスズメとは -->
 <section>
@@ -804,61 +1018,73 @@
       <span class="section-label-num">05</span>
       <span class="section-label-text">Knowledge</span>
     </div>
-    <h2 class="section-title-jp">ムレスズメとは</h2>
+    <h2 class="section-title-jp" data-i18n="sec_knowledge_h2">ムレスズメとは</h2>
     <span class="section-title-en">About Muresuzume</span>
     <div class="knowledge-cards fade-in-on-scroll">
 
       <div class="knowledge-card">
         <div class="knowledge-num">01</div>
         <div>
-          <div class="knowledge-title">原産と名前の由来</div>
-          <p class="knowledge-text">中国北部を原産とするマメ科の落葉樹。サクラが散る頃に咲く鮮やかな黄色い花を観賞するため、庭木、垣根、花材などに使われる。中国名は「金雀花」で、和名のムレスズメ（群雀）はこれを日本風にアレンジしたもの。日本へ渡来したのは江戸時代とされる。</p>
+          <div class="knowledge-title" data-i18n="know_1_title">原産と名前の由来</div>
+          <p class="knowledge-text" data-i18n="know_1_text">中国北部を原産とするマメ科の落葉樹。サクラが散る頃に咲く鮮やかな黄色い花を観賞するため、庭木、垣根、花材などに使われる。中国名は「金雀花」で、和名のムレスズメ（群雀）はこれを日本風にアレンジしたもの。日本へ渡来したのは江戸時代とされる。</p>
         </div>
       </div>
 
       <div class="knowledge-card">
         <div class="knowledge-num">02</div>
         <div>
-          <div class="knowledge-title">花の特徴</div>
-          <p class="knowledge-text">ムレスズメの開花は４〜６月で、長さ２〜３センチの花が葉の脇で下向きに咲く。花はエニシダに似た蝶形だが、花の後方にある萼筒はエニシダのそれよりも長く、よく目立つ。咲き始めは黄色だが、次第に赤みを帯びてくる。季節外れの狂い咲きも多い。</p>
+          <div class="knowledge-title" data-i18n="know_2_title">花の特徴</div>
+          <p class="knowledge-text" data-i18n="know_2_text">ムレスズメの開花は４〜６月で、長さ２〜３センチの花が葉の脇で下向きに咲く。花はエニシダに似た蝶形だが、花の後方にある萼筒はエニシダのそれよりも長く、よく目立つ。咲き始めは黄色だが、次第に赤みを帯びてくる。季節外れの狂い咲きも多い。</p>
         </div>
       </div>
 
       <div class="knowledge-card">
         <div class="knowledge-num">03</div>
         <div>
-          <div class="knowledge-title">「雀」と「金鶏」の話</div>
-          <p class="knowledge-text">細い枝に雀が並んでとまっているように見えためムレスズメになったという説が分かりやすいが、中国での「雀」は日本でいうスズメではなく、黄色い羽毛を持つヒワの仲間のこと。また、別名キンケイジのキンケイ（金鶏）は、中国やミャンマーに生息するキジの仲間。</p>
+          <div class="knowledge-title" data-i18n="know_3_title">「雀」と「金鶏」の話</div>
+          <p class="knowledge-text" data-i18n="know_3_text">細い枝に雀が並んでとまっているように見えためムレスズメになったという説が分かりやすいが、中国での「雀」は日本でいうスズメではなく、黄色い羽毛を持つヒワの仲間のこと。また、別名キンケイジのキンケイ（金鶏）は、中国やミャンマーに生息するキジの仲間。</p>
         </div>
       </div>
 
       <div class="knowledge-card">
         <div class="knowledge-num">04</div>
         <div>
-          <div class="knowledge-title">葉のかたち</div>
-          <p class="knowledge-text">葉は二対の小葉からなる羽根状で、先端１枚がない「偶数羽状複葉」。枝先側の２枚の方が大きく、短い枝では束になって生じるが、長い枝では互い違いに生じる。</p>
+          <div class="knowledge-title" data-i18n="know_4_title">葉のかたち</div>
+          <p class="knowledge-text" data-i18n="know_4_text">葉は二対の小葉からなる羽根状で、先端１枚がない「偶数羽状複葉」。枝先側の２枚の方が大きく、短い枝では束になって生じるが、長い枝では互い違いに生じる。</p>
         </div>
       </div>
 
       <div class="knowledge-card">
         <div class="knowledge-num">05</div>
         <div>
-          <div class="knowledge-title">幹と枝・トゲ</div>
-          <p class="knowledge-text">主だった幹はなく、細い枝が地際から多数生じる。樹皮には黄褐色の斑点があるが、成長に伴って剥離しやすい。枝にあるトゲは前年の葉軸や托葉から変化したものだが、触れてもそれほど痛くない。</p>
+          <div class="knowledge-title" data-i18n="know_5_title">幹と枝・トゲ</div>
+          <p class="knowledge-text" data-i18n="know_5_text">主だった幹はなく、細い枝が地際から多数生じる。樹皮には黄褐色の斑点があるが、成長に伴って剥離しやすい。枝にあるトゲは前年の葉軸や托葉から変化したものだが、触れてもそれほど痛くない。</p>
         </div>
       </div>
 
       <div class="knowledge-card">
         <div class="knowledge-num">06</div>
         <div>
-          <div class="knowledge-title">スキンケアへの活用</div>
-          <p class="knowledge-text">発酵させたムレスズメの根から抽出したエキスは、ファンデーションなどのスキンケアに使われる。</p>
+          <div class="knowledge-title" data-i18n="know_6_title">スキンケアへの活用</div>
+          <p class="knowledge-text" data-i18n="know_6_text">発酵させたムレスズメの根から抽出したエキスは、ファンデーションなどのスキンケアに使われる。</p>
         </div>
       </div>
 
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,35 C208,31 418,43 628,33 C836,26 1016,43 1200,36" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C264,46 484,29 726,41 C924,31 1084,45 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,33 C188,39 378,26 564,37 C764,29 958,43 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C282,34 536,53 794,41 C974,34 1144,43 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,39 C338,34 642,43 952,34 1094,31 1200,36.3" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 06 展示履歴 -->
 <section>
@@ -867,36 +1093,48 @@
       <span class="section-label-num">06</span>
       <span class="section-label-text">Exhibition</span>
     </div>
-    <h2 class="section-title-jp">展示履歴</h2>
+    <h2 class="section-title-jp" data-i18n="sec_history_h2">展示履歴</h2>
     <span class="section-title-en">Exhibition History</span>
     <div class="history-timeline fade-in-on-scroll">
       <div class="history-item">
         <div class="history-dot"></div>
-        <div class="history-year">2026 / Spring</div>
-        <div class="history-title">金閣寺 満開時展示・撮影</div>
-        <p class="history-text">花の満開時に金閣寺へ持参。外国人観光客との交流多数。</p>
+        <div class="history-year" data-i18n="hist_1_year">2026 / Spring</div>
+        <div class="history-title" data-i18n="hist_1_title">金閣寺 満開時展示・撮影</div>
+        <p class="history-text" data-i18n="hist_1_text">花の満開時に金閣寺へ持参。外国人観光客との交流多数。</p>
       </div>
       <div class="history-item">
         <div class="history-dot"></div>
-        <div class="history-year">Exhibition Record</div>
-        <div class="history-title">京都、某所　著名盆栽展</div>
-        <p class="history-text">徳川ゆかりの盆栽、樹齢500年級の盆栽が並ぶ空間での展示経験あり。</p>
+        <div class="history-year" data-i18n="hist_2_year">Exhibition Record</div>
+        <div class="history-title" data-i18n="hist_2_title">京都、某所　著名盆栽展</div>
+        <p class="history-text" data-i18n="hist_2_text">徳川ゆかりの盆栽、樹齢500年級の盆栽が並ぶ空間での展示経験あり。</p>
       </div>
       <div class="history-item">
         <div class="history-dot"></div>
-        <div class="history-year">Award</div>
-        <div class="history-title">「盆栽新世紀」コンテスト 優勝</div>
-        <p class="history-text">受賞歴として「盆栽新世紀」コンテスト優勝。<span class="draft">来歴に確かな実績を持つ。</span></p>
+        <div class="history-year" data-i18n="hist_3_year">Award</div>
+        <div class="history-title" data-i18n="hist_3_title">「盆栽新世紀」コンテスト 優勝</div>
+        <p class="history-text" data-i18n-html="hist_3_text_html">受賞歴として「盆栽新世紀」コンテスト優勝。<span class="draft">来歴に確かな実績を持つ。</span></p>
       </div>
       <div class="history-item">
         <div class="history-dot"></div>
-        <div class="history-year">Provenance</div>
-        <div class="history-title">元・巨人軍 柴田勲氏 旧蔵</div>
-        <p class="history-text draft">著名な前所有者のもとで大切に育てられてきた品格ある一樹。</p>
+        <div class="history-year" data-i18n="hist_4_year">Provenance</div>
+        <div class="history-title" data-i18n="hist_4_title">元・巨人軍 柴田勲氏 旧蔵</div>
+        <p class="history-text draft" data-i18n="hist_4_text">著名な前所有者のもとで大切に育てられてきた品格ある一樹。</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C214,30 424,45 632,33 C840,27 1024,43 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,41 C258,46 488,29 718,41 C924,31 1088,45 1200,38" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C196,39 388,26 568,37 C764,29 946,43 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C276,34 542,53 792,41 C968,34 1140,44 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C314,34 638,43 952,34 1090,31 1200,36.4" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 07 楽しみ方 -->
 <section>
@@ -905,43 +1143,55 @@
       <span class="section-label-num">07</span>
       <span class="section-label-text">Enjoy</span>
     </div>
-    <h2 class="section-title-jp">楽しみ方</h2>
+    <h2 class="section-title-jp" data-i18n="sec_enjoy_h2">楽しみ方</h2>
     <span class="section-title-en">How to Enjoy</span>
     <div class="care-sub-image fade-in-on-scroll">
-      <img class="care-sub-image-img" src="images/kinjyakka/sub-care.webp" alt="水景のそばに飾られた金雀花の盆栽" width="960" height="540" loading="lazy" decoding="async">
+      <img class="care-sub-image-img" src="images/kinjyakka/sub-care.webp" alt="水景のそばに飾られた金雀花の盆栽" data-i18n-alt="alt_sub_care" width="960" height="540" loading="lazy" decoding="async">
     </div>
     <div class="care-steps fade-in-on-scroll">
       <div class="care-step">
         <div class="care-step-num">1</div>
         <div>
-          <div class="care-step-title">置き場所・日当たり</div>
-          <p class="care-step-text draft">春〜秋は屋外の日当たりの良い場所で管理します。直射日光を好みますが、夏の西日は避けてください。冬は霜から守り、霜が当たらない軒下などで管理します。</p>
+          <div class="care-step-title" data-i18n="care_1_title">置き場所・日当たり</div>
+          <p class="care-step-text draft" data-i18n="care_1_text">春〜秋は屋外の日当たりの良い場所で管理します。直射日光を好みますが、夏の西日は避けてください。冬は霜から守り、霜が当たらない軒下などで管理します。</p>
         </div>
       </div>
       <div class="care-step">
         <div class="care-step-num">2</div>
         <div>
-          <div class="care-step-title">水やり</div>
-          <p class="care-step-text draft">春〜秋は土の表面が乾いたらたっぷりと与えます。花時は特に乾燥しやすいため、朝夕2回を目安に。冬は乾かし気味に管理し、根腐れに注意します。</p>
+          <div class="care-step-title" data-i18n="care_2_title">水やり</div>
+          <p class="care-step-text draft" data-i18n="care_2_text">春〜秋は土の表面が乾いたらたっぷりと与えます。花時は特に乾燥しやすいため、朝夕2回を目安に。冬は乾かし気味に管理し、根腐れに注意します。</p>
         </div>
       </div>
       <div class="care-step">
         <div class="care-step-num">3</div>
         <div>
-          <div class="care-step-title">花の楽しみ方</div>
-          <p class="care-step-text draft">春の開花期（3〜4月）が最大の見どころです。金色の花が枝を覆う様子を正面から鑑賞ください。花後に軽く剪定することで樹形が整います。</p>
+          <div class="care-step-title" data-i18n="care_3_title">花の楽しみ方</div>
+          <p class="care-step-text draft" data-i18n="care_3_text">春の開花期（3〜4月）が最大の見どころです。金色の花が枝を覆う様子を正面から鑑賞ください。花後に軽く剪定することで樹形が整います。</p>
         </div>
       </div>
       <div class="care-step">
         <div class="care-step-num">4</div>
         <div>
-          <div class="care-step-title">肥料・植替え</div>
-          <p class="care-step-text draft">開花後〜秋にかけて緩効性肥料を施します。植替えは2〜3年に1度、春の芽出し前が適期。根を整理し、新鮮な土に替えることで樹の活力を保ちます。</p>
+          <div class="care-step-title" data-i18n="care_4_title">肥料・植替え</div>
+          <p class="care-step-text draft" data-i18n="care_4_text">開花後〜秋にかけて緩効性肥料を施します。植替えは2〜3年に1度、春の芽出し前が適期。根を整理し、新鮮な土に替えることで樹の活力を保ちます。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,35 C220,31 436,43 628,34 C838,26 1022,43 1200,36" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C252,46 472,29 712,41 C932,31 1096,43 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,33 C194,39 396,26 556,37 C764,29 968,43 1200,33" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,45 C288,34 552,53 804,41 C976,32 1144,43 1200,38" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,38 C328,33 642,42 962,34 1086,31 1200,36.2" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
 
 <!-- 08 販売状況 -->
 <section>
@@ -950,13 +1200,13 @@
       <span class="section-label-num">08</span>
       <span class="section-label-text">Sales</span>
     </div>
-    <h2 class="section-title-jp">販売状況</h2>
+    <h2 class="section-title-jp" data-i18n="sec_sales_h2">販売状況</h2>
     <span class="section-title-en">Availability</span>
 
     <div class="sales-status-large fade-in-on-scroll">
-      <div class="sales-price-display">販売価格（税込）</div>
-      <div class="sales-price-number">¥350,000</div>
-      <div class="sales-price-tax">税込 ／ 送料・引取方法は別途ご相談</div>
+      <div class="sales-price-display" data-i18n="sales_price_label">販売価格（税込）</div>
+      <div class="sales-price-number" data-i18n="sales_price_number">¥350,000</div>
+      <div class="sales-price-tax" data-i18n="sales_price_tax">税込 ／ 送料・引取方法は別途ご相談</div>
     </div>
 
     <!-- 2列グリッド：左＝レンタル・詳細問い合わせ／右＝展示依頼・購入相談（強調） -->
@@ -965,29 +1215,29 @@
       <!-- 左列 -->
       <div class="sales-option">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
-        <div class="sales-option-title">レンタル</div>
-        <p class="sales-option-text">期間限定レンタルのご相談</p>
+        <div class="sales-option-title" data-i18n="sales_opt_rent_title">レンタル</div>
+        <p class="sales-option-text" data-i18n="sales_opt_rent_text">期間限定レンタルのご相談</p>
       </div>
 
       <!-- 右列（強調） -->
       <div class="sales-option primary">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
-        <div class="sales-option-title primary-title">展示依頼</div>
-        <p class="sales-option-text">イベント・ギャラリー等への一時貸出</p>
+        <div class="sales-option-title primary-title" data-i18n="sales_opt_disp_title">展示依頼</div>
+        <p class="sales-option-text" data-i18n="sales_opt_disp_text">イベント・ギャラリー等への一時貸出</p>
       </div>
 
       <!-- 左列 -->
       <div class="sales-option">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
-        <div class="sales-option-title">詳細問い合わせ</div>
-        <p class="sales-option-text">作品詳細や状態に関するご質問</p>
+        <div class="sales-option-title" data-i18n="sales_opt_detail_title">詳細問い合わせ</div>
+        <p class="sales-option-text" data-i18n="sales_opt_detail_text">作品詳細や状態に関するご質問</p>
       </div>
 
       <!-- 右列（強調） -->
       <div class="sales-option primary">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
-        <div class="sales-option-title primary-title">購入相談</div>
-        <p class="sales-option-text">ご購入・譲渡のご相談</p>
+        <div class="sales-option-title primary-title" data-i18n="sales_opt_buy_title">購入相談</div>
+        <p class="sales-option-text" data-i18n="sales_opt_buy_text">ご購入・譲渡のご相談</p>
       </div>
 
     </div>
@@ -1002,8 +1252,8 @@
           </svg>
         </div>
         <div>
-          <div class="sales-contact-title">その他お問い合わせ</div>
-          <div class="sales-contact-sub">上記以外のご質問・ご相談はこちら</div>
+          <div class="sales-contact-title" data-i18n="sales_contact_title">その他お問い合わせ</div>
+          <div class="sales-contact-sub" data-i18n="sales_contact_sub">上記以外のご質問・ご相談はこちら</div>
         </div>
       </div>
       <div class="sales-contact-arrow">→</div>
@@ -1011,18 +1261,30 @@
 
     <!-- 管理番号 -->
     <div class="sales-admin-row">
-      <span class="sales-admin-label">管理番号</span>
+      <span class="sales-admin-label" data-i18n="sales_admin_label">管理番号</span>
       <span class="sales-admin-code">KIN-001</span>
     </div>
 
   </div>
 </section>
 
+<div class="sammon-sep" aria-hidden="true">
+  <div class="sammon-sep-inner">
+    <svg class="sammon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 72" preserveAspectRatio="none">
+      <path d="M0,36 C206,31 418,43 626,34 C834,26 1018,44 1200,35" opacity="0.88" stroke-width="0.5"/>
+      <path d="M0,40 C268,46 492,29 728,41 C928,31 1082,45 1200,37" opacity="0.72" stroke-width="0.65"/>
+      <path d="M0,32 C198,39 376,26 562,37 C758,29 972,43 1200,34" opacity="0.62" stroke-width="0.55"/>
+      <path d="M0,44 C284,34 538,53 796,41 C972,34 1136,43 1200,39" opacity="0.52" stroke-width="0.75"/>
+      <path d="M0,39 C344,34 646,43 948,34 1092,30 1200,36.3" opacity="0.42" stroke-width="0.6"/>
+    </svg>
+  </div>
+</div>
+
 <!-- フッター -->
 <footer>
   <div class="container">
     <div class="footer-logo">Bunjin-ju Bonsai Collection</div>
-    <div class="footer-logo-jp">文人縁盆栽コレクション</div>
+    <div class="footer-logo-jp" data-i18n="footer_logo_jp">文人縁盆栽コレクション</div>
     <div class="footer-deco"></div>
     <p class="footer-copy">© 2026 Bonsai Collection. All rights reserved.</p>
   </div>
@@ -1030,6 +1292,255 @@
 
 <script>
 (function () {
+  var LANG_STORAGE_KEY = 'bonsai-lp-lang';
+
+  var translations = {
+    ja: {
+      pageTitle: '金雀花 | 文人縁盆栽コレクション',
+      aria_lang_switch: '言語を選ぶ',
+      hero_title: '金雀花',
+      hero_subtitle: '― 金に雀の花 ―',
+      hero_tagline_html: '春、金色の花が一斉に咲く姿は、<br>まるで千の光が枝に降り積もるかのよう。<br>一樹に宿る、静謐な生命の輝き。',
+      tate_vertical: '文人縁盆栽',
+      alt_main_visual: '金閣寺を背景にした金雀花の文人縁',
+      caption_mv_1: '金雀花　樹齢 約50年',
+      caption_mv_2: '撮影：金閣寺展示時',
+      alt_night: '夜の京都・八坂の塔と金雀花',
+      caption_atmo_1: '夜の京都にて',
+      caption_atmo_2: 'Atmosphere — Kyoto Night',
+      sec_details_h2: '詳細情報',
+      info_label_work_name: '作品名（正式名・ふりがな）',
+      info_work_name_html: '金雀花　<span class="info-reading">キンチャッカ</span>',
+      info_work_sub_en: 'Kin-suzume Bonsai',
+      info_label_species: '樹種',
+      info_species_html: 'ムレスズメ<br><span class="info-tree-sub">マメ科の落葉樹／中国名：金雀花</span>',
+      info_label_age: '樹齢',
+      info_age_html: '約 <span class="info-age-em">50</span> 年',
+      info_label_price: '価格',
+      info_price_html: '¥350,000<span class="info-price-suffix">（税込）</span>',
+      info_label_sale_status: '販売状況',
+      info_sale_status_text: '販売中（在庫あり）',
+      sec_about_h2: 'この盆栽について',
+      about_lead_html: '春になると、金色の花を一斉に咲かせる。<br>苔盤の静かな佇まいと、まばゆい花の対比が、この一樹の魅力です。',
+      about_body: 'この樹は、花の季節になると一気に華やぎます。普段の静かな佇まいと、開花時のまばゆさの差が大きく、その変化そのものが作品の魅力です。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。',
+      sec_story_h2: '来歴・ストーリー',
+      alt_story_1: '金閣寺を背景にした金雀花の盆栽',
+      story_1_title: '金閣寺での撮影・展示',
+      story_1_text: '先月花房を訪れた際、花が満開の時期に金閣寺へ持参し、多くの外国人観光客の方々と写真を撮る機会がありました。この盆栽は、文人縁の活動の中でも「文化を運ぶ盆栽」「人の記憶に残る盆栽」として象徴的な存在です。',
+      alt_story_2: '金雀花の盆栽',
+      story_2_title: '来歴 ― 元・巨人軍 柴田勲氏より',
+      story_2_text: '元・巨人軍 柴田勲氏所有歴あり。受賞歴として「盆栽新世紀」コンテスト優勝。その輝かしい来歴が、この樹の品格と価値をさらに高めています。',
+      alt_story_4: '盆栽園に飾られた金雀花',
+      story_3_title: '京都の著名盆栽園での展示',
+      story_3_text: '徳川ゆかりの盆栽や樹齢500年級の盆栽が飾られる空間にも並んだ経験を持ちます。',
+      sec_knowledge_h2: 'ムレスズメとは',
+      know_1_title: '原産と名前の由来',
+      know_1_text: '中国北部を原産とするマメ科の落葉樹。サクラが散る頃に咲く鮮やかな黄色い花を観賞するため、庭木、垣根、花材などに使われる。中国名は「金雀花」で、和名のムレスズメ（群雀）はこれを日本風にアレンジしたもの。日本へ渡来したのは江戸時代とされる。',
+      know_2_title: '花の特徴',
+      know_2_text: 'ムレスズメの開花は４〜６月で、長さ２〜３センチの花が葉の脇で下向きに咲く。花はエニシダに似た蝶形だが、花の後方にある萼筒はエニシダのそれよりも長く、よく目立つ。咲き始めは黄色だが、次第に赤みを帯びてくる。季節外れの狂い咲きも多い。',
+      know_3_title: '「雀」と「金鶏」の話',
+      know_3_text: '細い枝に雀が並んでとまっているように見えためムレスズメになったという説が分かりやすいが、中国での「雀」は日本でいうスズメではなく、黄色い羽毛を持つヒワの仲間のこと。また、別名キンケイジのキンケイ（金鶏）は、中国やミャンマーに生息するキジの仲間。',
+      know_4_title: '葉のかたち',
+      know_4_text: '葉は二対の小葉からなる羽根状で、先端１枚がない「偶数羽状複葉」。枝先側の２枚の方が大きく、短い枝では束になって生じるが、長い枝では互い違いに生じる。',
+      know_5_title: '幹と枝・トゲ',
+      know_5_text: '主だった幹はなく、細い枝が地際から多数生じる。樹皮には黄褐色の斑点があるが、成長に伴って剥離しやすい。枝にあるトゲは前年の葉軸や托葉から変化したものだが、触れてもそれほど痛くない。',
+      know_6_title: 'スキンケアへの活用',
+      know_6_text: '発酵させたムレスズメの根から抽出したエキスは、ファンデーションなどのスキンケアに使われる。',
+      sec_history_h2: '展示履歴',
+      hist_1_year: '2026 / Spring',
+      hist_1_title: '金閣寺 満開時展示・撮影',
+      hist_1_text: '花の満開時に金閣寺へ持参。外国人観光客との交流多数。',
+      hist_2_year: 'Exhibition Record',
+      hist_2_title: '京都、某所　著名盆栽展',
+      hist_2_text: '徳川ゆかりの盆栽、樹齢500年級の盆栽が並ぶ空間での展示経験あり。',
+      hist_3_year: 'Award',
+      hist_3_title: '「盆栽新世紀」コンテスト 優勝',
+      hist_3_text_html: '受賞歴として「盆栽新世紀」コンテスト優勝。<span class="draft">来歴に確かな実績を持つ。</span>',
+      hist_4_year: 'Provenance',
+      hist_4_title: '元・巨人軍 柴田勲氏 旧蔵',
+      hist_4_text: '著名な前所有者のもとで大切に育てられてきた品格ある一樹。',
+      sec_enjoy_h2: '楽しみ方',
+      alt_sub_care: '水景のそばに飾られた金雀花の盆栽',
+      care_1_title: '置き場所・日当たり',
+      care_1_text: '春〜秋は屋外の日当たりの良い場所で管理します。直射日光を好みますが、夏の西日は避けてください。冬は霜から守り、霜が当たらない軒下などで管理します。',
+      care_2_title: '水やり',
+      care_2_text: '春〜秋は土の表面が乾いたらたっぷりと与えます。花時は特に乾燥しやすいため、朝夕2回を目安に。冬は乾かし気味に管理し、根腐れに注意します。',
+      care_3_title: '花の楽しみ方',
+      care_3_text: '春の開花期（3〜4月）が最大の見どころです。金色の花が枝を覆う様子を正面から鑑賞ください。花後に軽く剪定することで樹形が整います。',
+      care_4_title: '肥料・植替え',
+      care_4_text: '開花後〜秋にかけて緩効性肥料を施します。植替えは2〜3年に1度、春の芽出し前が適期。根を整理し、新鮮な土に替えることで樹の活力を保ちます。',
+      sec_sales_h2: '販売状況',
+      sales_price_label: '販売価格（税込）',
+      sales_price_number: '¥350,000',
+      sales_price_tax: '税込 ／ 送料・引取方法は別途ご相談',
+      sales_opt_rent_title: 'レンタル',
+      sales_opt_rent_text: '期間限定レンタルのご相談',
+      sales_opt_disp_title: '展示依頼',
+      sales_opt_disp_text: 'イベント・ギャラリー等への一時貸出',
+      sales_opt_detail_title: '詳細問い合わせ',
+      sales_opt_detail_text: '作品詳細や状態に関するご質問',
+      sales_opt_buy_title: '購入相談',
+      sales_opt_buy_text: 'ご購入・譲渡のご相談',
+      sales_contact_title: 'その他お問い合わせ',
+      sales_contact_sub: '上記以外のご質問・ご相談はこちら',
+      sales_admin_label: '管理番号',
+      footer_logo_jp: '文人縁盆栽コレクション'
+    },
+    en: {
+      pageTitle: 'Kinchakka | Bunjin-ju Bonsai Collection',
+      aria_lang_switch: 'Choose language',
+      hero_title: 'Kinchakka',
+      hero_subtitle: '— Gold among sparrows —',
+      hero_tagline_html: 'In spring, when golden blossoms open all at once,<br>it is as though a thousand soft lights drift down to rest upon the branches.<br>Quiet radiance dwells within a single tree.',
+      tate_vertical: 'Bunjin-ju · Bonsai',
+      alt_main_visual: 'Kinchakka beside Kinkaku-ji in the Bunjin-ju arrangement',
+      caption_mv_1: 'Kinchakka · Estimated age circa 50 years',
+      caption_mv_2: 'Photo: exhibited at Kinkaku-ji',
+      alt_night: 'Kyoto night, Yasaka pagoda with Kinchakka',
+      caption_atmo_1: 'Kyoto at night',
+      caption_atmo_2: 'Atmosphere — Kyoto Night',
+      sec_details_h2: 'Details',
+      info_label_work_name: 'Title (reading)',
+      info_work_name_html: 'Kinchakka <span class="info-reading">(kinchakka)</span>',
+      info_work_sub_en: 'Kin-suzume Bonsai',
+      info_label_species: 'Species',
+      info_species_html: 'Muresuzume (<i>Caragana</i> sp.)<br><span class="info-tree-sub">Fabaceae · deciduous / Chinese name “jīnquèhuā” (gold-sparrow blossom)</span>',
+      info_label_age: 'Tree age',
+      info_age_html: 'approx. <span class="info-age-em">50</span> years',
+      info_label_price: 'Price',
+      info_price_html: '¥350,000<span class="info-price-suffix">(tax incl.)</span>',
+      info_label_sale_status: 'Availability',
+      info_sale_status_text: 'For sale (in stock)',
+      sec_about_h2: 'About This Tree',
+      about_lead_html: 'Each spring it opens into a veil of molten gold.<br>The moss sheet’s stillness beside the glare of blossom is where this composition lives.',
+      about_body: 'The tree leaps into fullness in flowering season; the leap from its everyday quiet calm to blazing bloom is the work’s hinge. Within Bunjin-ju’s gathering of trees, this one carries culture on its branches and settles in visitor memory alike.',
+      sec_story_h2: 'Provenance · Stories',
+      alt_story_1: 'Kinchakka bonsai with Kinkaku-ji beyond',
+      story_1_title: 'Photographs and exhibition at Kinkaku-ji',
+      story_1_text: 'On a Hanabana visit during full bloom last month we brought this tree to Kinkaku-ji and shared portraits with visitors from overseas. Across Bunjin-ju’s outings it exemplifies trees that ferry culture outward and linger in mind after one meeting.',
+      alt_story_2: 'Kinchakka bonsai',
+      story_2_title: 'Provenance · From Isao Shibata, formerly of the Yomiuri Giants',
+      story_2_text: 'Previously held under Isao Shibata, formerly Yomiuri Giants. Award line: grand prize in the Shin-Sedai Bonsai contest. Such provenance strengthens the stature and resonance of this individual tree.',
+      alt_story_4: 'Kinchakka shown in a Kyoto garden nursery',
+      story_3_title: 'Exhibition within a famed Kyoto nursery',
+      story_3_text: 'It has also stood beside Tokugawa-heritage trees and trunks nearing five centuries in age.',
+      sec_knowledge_h2: 'What is “Muresuzume”?',
+      know_1_title: 'Origin and naming',
+      know_1_text: 'Northern China is stronghold habitat for these deciduous legumes whence they came; bright yellow pea-flowers bloom as cherry fades, so they ornament hedges and paths. Classical Chinese naming calls them “golden sparrow blossoms”; Japanese “muresuzume” (gathering little birds) bends that image nearer home. Imported into Japan roughly in the Edo era.',
+      know_2_title: 'Flower form',
+      know_2_text: 'Bloom season runs April–June: two-centimetre blossoms hang downward from leaf axils. Compared with brooms (genista), the fused calyx tube projects longer aft and reads bolder. Sunny yellow mellows rosier with age and off-season errant blossoms are ordinary.',
+      know_3_title: 'Bird words: “sparrows” & “golden-cock birds”',
+      know_3_text: 'Stories of sparrows strung fine along twigs are easy to grasp, yet Mandarin “què” can mean brightly yellow finched birds, not strictly house-sparrows. The cognate moniker “golden-cock birds” echoes pheasants from China southwest into Myanmar—not domestic fowl.',
+      know_4_title: 'Leaf silhouette',
+      know_4_text: 'Two pairs plus one missing tip form an evenly pinnate leaf: blunt pairwise leaflets widen toward shoots, clustered on short spur growth and alternating along longer extension wood.',
+      know_5_title: 'Stems · thorns',
+      know_5_text: 'No single commanding trunk dominates; sprays of slender branches rise straight from flare to crown. Bark shows tawny spotting that readily exfoliates while growing. Spinelets emerge from hardened petioles and stipules—they scratch more than sting.',
+      know_6_title: 'Roots in cosmetics',
+      know_6_text: 'Cosmetic lines occasionally ferment dug roots for foundation-friendly extracts.',
+      sec_history_h2: 'Show history',
+      hist_1_year: '2026 / Spring',
+      hist_1_title: 'Peak bloom outing & photography · Kinkaku-ji',
+      hist_1_text: 'Carried in at full blossom; plentiful quiet conversations with travellers from overseas.',
+      hist_2_year: 'Exhibition Record',
+      hist_2_title: 'Historic bonsai display · Kyoto (venue undisclosed)',
+      hist_2_text: 'Previously shown among Tokugawa-line works and monumental five-century veterans.',
+      hist_3_year: 'Award',
+      hist_3_title: 'Shin-Sedai Bonsai Contest · Grand prize',
+      hist_3_text_html: 'Documented laureate showing for Shin-Sedai.<span class="draft"> Credentialed provenance complements the pedigree.</span>',
+      hist_4_year: 'Provenance',
+      hist_4_title: 'Former collection · Mr. Isao Shibata',
+      hist_4_text: 'A dignified lineage tended under collectors who prized measured patience.',
+      sec_enjoy_h2: 'Living with It',
+      alt_sub_care: 'Kinchakka beside a miniature pool-stone tableau',
+      care_1_title: 'Placement & light',
+      care_1_text: 'Late spring–autumn: bright outdoor exposures with sun-loving habits; shield from harsh sunset heat in midsummer winter: shelter from frost beneath eaves or cold frames.',
+      care_2_title: 'Watering',
+      care_2_text: 'Growing season: saturate when topsoil dries. During bloom dryness sneaks upward—often morning/evening drinks. Cool months: lighten watering to avoid stagnant roots.',
+      care_3_title: 'Flower viewing',
+      care_3_text: 'March–April marks the height: study the frontal curtain of gilt petals. Gentle trim thereafter helps restore silhouette clarity.',
+      care_4_title: 'Feeding & repotting',
+      care_4_text: 'Slow-release feeding after blooming through autumn. Lift from pot every ~2–3 springs before budding: comb roots outward and replenish fresh mix to conserve vigour.',
+      sec_sales_h2: 'Sale status',
+      sales_price_label: 'Price (tax incl.)',
+      sales_price_number: '¥350,000',
+      sales_price_tax: 'Includes tax · shipping & pickup by arrangement',
+      sales_opt_rent_title: 'Rental',
+      sales_opt_rent_text: 'Discuss limited-term hires',
+      sales_opt_disp_title: 'Loans',
+      sales_opt_disp_text: 'Temporary loans for salons, fairs, exhibitions',
+      sales_opt_detail_title: 'Technical inquiry',
+      sales_opt_detail_text: 'Detailed questions on condition',
+      sales_opt_buy_title: 'Acquisition',
+      sales_opt_buy_text: 'Discuss purchase · transfer arrangements',
+      sales_contact_title: 'Other enquiries',
+      sales_contact_sub: 'Questions apart from categories above · contact here',
+      sales_admin_label: 'Reference',
+      footer_logo_jp: 'Bunjin-ju Bonsai Collection'
+    }
+  };
+
+  function normalizeLang(code) {
+    if (code === 'en' || code === 'ja') return code;
+    return 'ja';
+  }
+
+  function applyLang(lang) {
+    lang = normalizeLang(lang);
+    var bundle = translations[lang];
+    if (!bundle) return;
+
+    document.documentElement.lang = lang === 'en' ? 'en' : 'ja';
+    document.body.classList.toggle('lang-en', lang === 'en');
+    document.title = bundle.pageTitle;
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      if (bundle[k] != null && bundle[k] !== '') el.textContent = bundle[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n-html');
+      if (bundle[k] != null && bundle[k] !== '') el.innerHTML = bundle[k];
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n-alt');
+      if (bundle[k] != null) el.setAttribute('alt', bundle[k]);
+    });
+
+    var sw = document.getElementById('lang-switch');
+    if (sw && bundle.aria_lang_switch) sw.setAttribute('aria-label', bundle.aria_lang_switch);
+
+    var btnJa = document.getElementById('lang-ja');
+    var btnEn = document.getElementById('lang-en');
+    if (btnJa) {
+      btnJa.classList.toggle('is-active', lang === 'ja');
+      btnJa.setAttribute('aria-pressed', lang === 'ja' ? 'true' : 'false');
+    }
+    if (btnEn) {
+      btnEn.classList.toggle('is-active', lang === 'en');
+      btnEn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+    }
+
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch (e) { /* noop */ }
+  }
+
+  function readStoredLang() {
+    try {
+      var raw = localStorage.getItem(LANG_STORAGE_KEY);
+      if (raw === 'ja' || raw === 'en') return raw;
+    } catch (e) { /* noop */ }
+    return null;
+  }
+
+  var preferred = readStoredLang() || 'ja';
+  applyLang(preferred);
+
+  var btnJaEl = document.getElementById('lang-ja');
+  var btnEnEl = document.getElementById('lang-en');
+  if (btnJaEl) btnJaEl.addEventListener('click', function () { applyLang('ja'); });
+  if (btnEnEl) btnEnEl.addEventListener('click', function () { applyLang('en'); });
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting) e.target.classList.add('visible');
@@ -1043,6 +1554,25 @@
     el.classList.add('fade-in-on-scroll');
     io.observe(el);
   });
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hempBg = document.querySelector('.hemp-bg');
+  var ticking = false;
+  function onScrollEffects() {
+    ticking = false;
+    var y = window.scrollY || window.pageYOffset;
+    if (hempBg && !reduceMotion) {
+      hempBg.style.setProperty('--parallax-shift', (y * 0.008) + 'px');
+    }
+  }
+  function requestTick() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onScrollEffects);
+    }
+  }
+  window.addEventListener('scroll', requestTick, { passive: true });
+  onScrollEffects();
 })();
 </script>
 </body>
