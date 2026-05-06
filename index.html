@@ -564,6 +564,19 @@
     color:var(--text-muted); margin-top:6px; position:relative; font-weight:300; z-index:1;
   }
 
+  /* リンク化（Instagram DM）：色・下線をトンマナどおり継承 */
+  a.sales-option,
+  a.sales-contact-bar {
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+  a.sales-option:focus-visible,
+  a.sales-contact-bar:focus-visible {
+    outline: 2px solid rgba(31, 77, 58, 0.35);
+    outline-offset: 3px;
+  }
   /* 販売オプション：縦2列レイアウト（展示依頼・購入相談を右に） */
   .sales-options-wrap {
     display: grid;
@@ -1211,37 +1224,37 @@
     <div class="sales-options-wrap fade-in-on-scroll">
 
       <!-- 左列 -->
-      <div class="sales-option">
+      <a href="https://www.instagram.com/bunjinen_bonsai?utm_source=qr" target="_blank" rel="noopener noreferrer" class="sales-option">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
         <div class="sales-option-title" data-i18n="sales_opt_rent_title">レンタル</div>
         <p class="sales-option-text" data-i18n="sales_opt_rent_text">期間限定レンタルのご相談</p>
-      </div>
+      </a>
 
       <!-- 右列（強調） -->
-      <div class="sales-option primary">
+      <a href="https://www.instagram.com/bunjinen_bonsai?utm_source=qr" target="_blank" rel="noopener noreferrer" class="sales-option primary">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
         <div class="sales-option-title primary-title" data-i18n="sales_opt_disp_title">展示依頼</div>
         <p class="sales-option-text" data-i18n="sales_opt_disp_text">イベント・ギャラリー等への一時貸出</p>
-      </div>
+      </a>
 
       <!-- 左列 -->
-      <div class="sales-option">
+      <a href="https://www.instagram.com/bunjinen_bonsai?utm_source=qr" target="_blank" rel="noopener noreferrer" class="sales-option">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-leftcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
         <div class="sales-option-title" data-i18n="sales_opt_detail_title">詳細問い合わせ</div>
         <p class="sales-option-text" data-i18n="sales_opt_detail_text">作品詳細や状態に関するご質問</p>
-      </div>
+      </a>
 
       <!-- 右列（強調） -->
-      <div class="sales-option primary">
+      <a href="https://www.instagram.com/bunjinen_bonsai?utm_source=qr" target="_blank" rel="noopener noreferrer" class="sales-option primary">
         <div class="sales-option-icon-box"><img class="sales-bonsai-icon" src="images/kinjyakka/sales-icon-rightcol.webp" width="384" height="384" loading="lazy" decoding="async" alt=""></div>
         <div class="sales-option-title primary-title" data-i18n="sales_opt_buy_title">購入相談</div>
         <p class="sales-option-text" data-i18n="sales_opt_buy_text">ご購入・譲渡のご相談</p>
-      </div>
+      </a>
 
     </div>
 
     <!-- その他お問い合わせ -->
-    <div class="sales-contact-bar fade-in-on-scroll">
+    <a href="https://www.instagram.com/bunjinen_bonsai?utm_source=qr" target="_blank" rel="noopener noreferrer" class="sales-contact-bar fade-in-on-scroll">
       <div class="sales-contact-left">
         <div class="sales-contact-icon-box" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -1254,8 +1267,8 @@
           <div class="sales-contact-sub" data-i18n="sales_contact_sub">上記以外のご質問・ご相談はこちら</div>
         </div>
       </div>
-      <div class="sales-contact-arrow">→</div>
-    </div>
+      <div class="sales-contact-arrow" aria-hidden="true">→</div>
+    </a>
 
     <!-- 管理番号 -->
     <div class="sales-admin-row">
